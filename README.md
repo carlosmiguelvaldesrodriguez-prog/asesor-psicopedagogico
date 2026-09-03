@@ -34,8 +34,8 @@ El sistema traduce a la práctica pedagógica viva los fundamentos de la **Cogni
 
 Cualquier docente puede utilizar la herramienta directamente desde su navegador sin instalar software:
 
-👉 **[Abrir Asesor Psicopedagógico en Línea](https://TU_USUARIO.github.io/asesor-psicopedagogico/)**  
-*(Reemplaza TU_USUARIO por tu nombre de usuario exacto de GitHub)*
+👉 **[Abrir Asesor Psicopedagógico en Línea](https://carlosmiguelvaldesrodriguez-prog.github.io/asesor-psicopedagogico/)**  
+
 
 ### Requisito inicial (Gratuito):
 1. Obtén una clave API gratuita en [Google AI Studio](https://aistudio.google.com).
