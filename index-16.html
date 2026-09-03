@@ -1,0 +1,3295 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <title>Asesor Psicopedagógico</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Markdown & DOMPurify Security -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+  <!-- Parsers: SheetJS & Mammoth -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+              950: '#0f172a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+
+    /* Markdown Rendering & Table Styles */
+    .prose-markdown {
+      color: #cbd5e1;
+      font-size: 0.875rem;
+      line-height: 1.625;
+    }
+    .prose-markdown h1, .prose-markdown h2, .prose-markdown h3, .prose-markdown h4 {
+      color: #f8fafc;
+      font-weight: 700;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .prose-markdown h1 { font-size: 1.4rem; color: #60a5fa; }
+    .prose-markdown h2 { font-size: 1.2rem; border-bottom: 1px solid #334155; padding-bottom: 0.25rem; color: #93c5fd; }
+    .prose-markdown h3 { font-size: 1.05rem; color: #38bdf8; }
+    .prose-markdown p { margin-bottom: 0.75rem; }
+    .prose-markdown ul { list-style-type: disc; margin-left: 1.25rem; margin-bottom: 0.75rem; }
+    .prose-markdown ol { list-style-type: decimal; margin-left: 1.25rem; margin-bottom: 0.75rem; }
+    .prose-markdown li { margin-bottom: 0.25rem; }
+    .prose-markdown strong { color: #f1f5f9; font-weight: 600; }
+    
+    /* Dedicated Modern Markdown Tables */
+    .prose-markdown .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      margin: 1rem 0;
+      border-radius: 0.5rem;
+      border: 1px solid #334155;
+      background: #090d16;
+    }
+    .prose-markdown table {
+      width: 100%;
+      min-width: 500px;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.825rem;
+    }
+    .prose-markdown th {
+      background-color: #1e293b;
+      color: #93c5fd;
+      padding: 0.65rem 0.85rem;
+      font-weight: 600;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+      white-space: nowrap;
+    }
+    .prose-markdown td {
+      padding: 0.6rem 0.85rem;
+      border-bottom: 1px solid #1e293b;
+      color: #cbd5e1;
+    }
+    .prose-markdown tr:nth-child(even) td {
+      background-color: rgba(30, 41, 59, 0.35);
+    }
+    .prose-markdown tr:hover td {
+      background-color: rgba(59, 130, 246, 0.08);
+    }
+    .prose-markdown tr:last-child td {
+      border-bottom: none;
+    }
+
+    .prose-markdown blockquote {
+      border-left: 4px solid #3b82f6;
+      padding: 0.5rem 1rem;
+      margin: 0.85rem 0;
+      color: #94a3b8;
+      font-style: italic;
+      background: rgba(30, 58, 138, 0.15);
+      border-radius: 0 0.375rem 0.375rem 0;
+    }
+    .prose-markdown code {
+      background-color: #1e293b;
+      color: #fca5a5;
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+    }
+    .prose-markdown pre {
+      background-color: #0b0f19;
+      border: 1px solid #1e293b;
+      padding: 0.85rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+    }
+    .prose-markdown pre code {
+      background: transparent;
+      color: #e2e8f0;
+      padding: 0;
+    }
+
+    /* Subtle custom scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .pb-safe {
+      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    }
+  </style>
+</head>
+<body class="w-full max-w-full min-h-screen overflow-x-hidden bg-slate-950 text-slate-100 flex flex-col antialiased">
+
+  <!-- TOP APP BAR -->
+  <header class="h-14 bg-slate-900/95 border-b border-slate-800 flex items-center justify-between px-3 sm:px-6 flex-shrink-0 z-30 sticky top-0 backdrop-blur-md">
+    <div class="flex items-center space-x-3">
+      <!-- Mobile Drawer Hamburger Toggle Button -->
+      <button id="btnToggleMobileDrawer" onclick="toggleMobileDrawer()" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none transition" aria-label="Abrir Menú de Navegación">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-blue-700 via-indigo-600 to-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/25 flex-shrink-0">
+        <i class="fa-solid fa-compass text-white text-base"></i>
+      </div>
+      <div class="py-1">
+        <h1 class="font-bold text-sm sm:text-base tracking-tight bg-gradient-to-r from-blue-400 via-indigo-200 to-emerald-400 bg-clip-text text-transparent leading-normal py-1">
+          Asesor Psicopedagógico
+        </h1>
+        <p class="text-[10px] text-slate-400 hidden sm:block">Triaje de Dependencia Cognitiva y Consultoría Docente con IA</p>
+      </div>
+    </div>
+
+    <!-- Right Header Actions -->
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <!-- Active Cascade Status Badge -->
+      <div id="cascadeStatusBadge" class="hidden sm:flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-800/80 border border-slate-700 text-slate-300">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-1.5"></span>
+        <span id="cascadeStatusText" class="truncate max-w-[140px] md:max-w-[190px]">Cascada: Lista</span>
+      </div>
+
+      <!-- API Key Button -->
+      <button onclick="openApiKeyModal()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+        <i class="fa-solid fa-key text-amber-400"></i>
+        <span id="apiKeyBtnText">Configurar API Key</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MOBILE SLIDING DRAWER & BACKDROP -->
+  <div id="drawerBackdrop" onclick="closeMobileDrawer()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 hidden transition-opacity duration-300"></div>
+  <aside id="mobileDrawer" class="fixed top-0 left-0 bottom-0 w-72 max-w-[80vw] bg-slate-900 border-r border-slate-800 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-2xl md:hidden">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+          <i class="fa-solid fa-compass"></i>
+        </div>
+        <span class="font-bold text-sm text-white">Navegación</span>
+      </div>
+      <button onclick="closeMobileDrawer()" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800">
+        <i class="fa-solid fa-xmark text-base"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer Nav Links -->
+    <nav class="flex-1 overflow-y-auto p-3 space-y-1.5 text-xs font-medium">
+      <button onclick="switchTabAndCloseDrawer('evaluador')" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
+        <i class="fa-solid fa-stethoscope text-blue-400 w-5"></i>
+        <span>Evaluador Clínico</span>
+      </button>
+      <button onclick="switchTabAndCloseDrawer('chat')" data-tab="consultor" id="tab-btn-consultor-mobile" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
+        <i class="fa-solid fa-comments text-indigo-400 w-5"></i>
+        <span>Consultor en Vivo</span>
+      </button>
+      <button onclick="switchTabAndCloseDrawer('biblioteca')" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
+        <i class="fa-solid fa-book-bookmark text-emerald-400 w-5"></i>
+        <span>Biblioteca Fricción</span>
+      </button>
+      <button onclick="switchTabAndCloseDrawer('cascada')" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
+        <i class="fa-solid fa-layer-group text-amber-400 w-5"></i>
+        <span>Motor en Cascada</span>
+      </button>
+      <button onclick="switchTabAndCloseDrawer('evidencia')" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
+        <i class="fa-solid fa-graduation-cap text-purple-400 w-5"></i>
+        <span>Evidencia (28 Papers)</span>
+      </button>
+      <button onclick="switchTabAndCloseDrawer('guia')" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
+        <i class="fa-solid fa-book-open text-sky-400 w-5"></i>
+        <span>Manual de Uso</span>
+      </button>
+    </nav>
+
+    <!-- Mobile Drawer Footer -->
+    <div class="p-3 border-t border-slate-800 text-[11px] text-slate-400 space-y-2">
+      <div class="flex items-center justify-between">
+        <span>Estado Motor:</span>
+        <span id="drawerStatusText" class="text-emerald-400 font-semibold">Listo</span>
+      </div>
+      <button onclick="openApiKeyModal(); closeMobileDrawer();" class="w-full py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-center text-xs font-medium transition">
+        <i class="fa-solid fa-key text-amber-400 mr-1"></i> Gestionar API Key
+      </button>
+    </div>
+  </aside>
+
+  <!-- DESKTOP / HORIZONTAL NAVIGATION BAR -->
+  <nav class="bg-slate-900 border-b border-slate-800 hidden md:flex items-center px-4 sm:px-6 overflow-x-auto flex-shrink-0 z-20">
+    <div class="flex space-x-1 py-1.5 min-w-max text-xs font-medium">
+      <button onclick="switchTab('evaluador')" id="tab-evaluador" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition bg-blue-600 text-white shadow-sm">
+        <i class="fa-solid fa-stethoscope"></i>
+        <span>Evaluador Clínico</span>
+      </button>
+      <button onclick="switchTab('chat')" id="tab-chat" data-tab="consultor" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+        <i class="fa-solid fa-comments"></i>
+        <span>Consultor en Vivo</span>
+      </button>
+      <button onclick="switchTab('biblioteca')" id="tab-biblioteca" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+        <i class="fa-solid fa-book-bookmark"></i>
+        <span>Biblioteca Fricción</span>
+      </button>
+      <button onclick="switchTab('cascada')" id="tab-cascada" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Motor en Cascada</span>
+      </button>
+      <button onclick="switchTab('evidencia')" id="tab-evidencia" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>Evidencia (28 Papers)</span>
+      </button>
+      <button onclick="switchTab('guia')" id="tab-guia" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+        <i class="fa-solid fa-book-open"></i>
+        <span>Manual de Uso</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN SCROLLABLE CONTENT VIEWPORT -->
+  <main class="flex-1 w-full max-w-full overflow-y-auto relative flex flex-col bg-slate-950">
+
+    <!-- 1. TAB: EVALUADOR CLÍNICO-PEDAGÓGICO DUAL -->
+    <section id="view-evaluador" class="w-full max-w-6xl mx-auto p-3 sm:p-6 space-y-6">
+      
+      <!-- Welcome Banner -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-950/70 via-slate-900 to-indigo-950/70 border border-blue-900/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 shadow-xl">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-blue-900/80 text-blue-300 text-xs font-semibold border border-blue-700/50">
+              <i class="fa-solid fa-stethoscope mr-1"></i> Triaje Psicopedagógico Dual
+            </span>
+            <span class="text-xs text-slate-400 hidden sm:inline">Consensus Grounding: 28 Papers</span>
+          </div>
+          <h2 class="text-lg sm:text-xl font-bold text-white tracking-tight">
+            Diagnóstico de Dependencia Cognitiva y Pérdida de Soberanía Epistémica
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-300 max-w-2xl">
+            Evalúa y calibra intervenciones pedagógicas basadas en evidencia, tanto para alumnos individuales como para climas y dinámicas de aulas completas.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 self-end md:self-auto">
+          <span class="text-xs px-2.5 py-1 rounded bg-slate-800 text-emerald-400 border border-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-brain"></i>
+            <span>Razonamiento 4096t</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Scope Selector (Individual vs. Group) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-2 flex flex-col sm:flex-row gap-2 items-center justify-between shadow-md">
+        <span class="text-xs font-semibold text-slate-400 px-2 flex items-center gap-1.5">
+          <i class="fa-solid fa-sliders text-blue-400"></i> Alcance de la Evaluación:
+        </span>
+        <div class="grid grid-cols-2 gap-2 w-full sm:w-auto">
+          <button type="button" id="scopeBtnIndividual" onclick="setEvaluationScope('individual')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 bg-blue-600 text-white shadow-sm">
+            <i class="fa-solid fa-user"></i>
+            <span>👤 Caso Individual</span>
+          </button>
+          <button type="button" id="scopeBtnGroup" onclick="setEvaluationScope('group')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300">
+            <i class="fa-solid fa-users"></i>
+            <span>👥 Grupo / Aula Completa</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Two Column Layout: Form & Results -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- LEFT: Input Form (5 cols) -->
+        <div class="lg:col-span-5 bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <h3 class="font-semibold text-xs sm:text-sm text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-list text-blue-400"></i>
+              <span id="formScopeTitle">Parámetros del Caso Individual</span>
+            </h3>
+            <span id="scopeBadge" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800">
+              Individual
+            </span>
+          </div>
+
+          <!-- Selectors: Academic Area & Context -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Área Académica</label>
+              <select id="evalArea" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+                <option value="Ciencias Técnicas e Ingeniería (Cálculo, Programación, Circuitos, Mecánica, Datos)">Ciencias Técnicas / Ingeniería</option>
+                <option value="Ciencias Sociales y Humanidades (Derecho, Sociología, Historia, Filosofía)">Ciencias Sociales / Humanidades</option>
+                <option value="Ciencias de la Salud (Medicina, Enfermería, Psicología Clínica)">Ciencias de la Salud</option>
+                <option value="Ciencias Económicas y Administrativas (Finanzas, Gestión, Negocios)">Ciencias Económicas / Negocios</option>
+                <option value="Educación y Formación Pedagógica">Educación / Pedagogía</option>
+                <option value="Otras Áreas / Multidisciplinar">Otras Disciplinas</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Contexto Material</label>
+              <select id="evalContexto" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+                <option value="Presencial con conectividad de alta velocidad y dispositivos propios">Presencial (Conexión Alta)</option>
+                <option value="Semipresencial con contingencias (apagones, cortes, desconexión intermitente)">Semipresencial (Cortes / Apagones)</option>
+                <option value="100% Virtual / Remoto asíncrono">100% Remoto / Asíncrono</option>
+                <option value="Taller o Laboratorio Supervisado sin dispositivos personales">Laboratorio Supervisado</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Dynamic Warning Checklist Container -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-semibold text-amber-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="checklistHeader">Indicadores Observables de Alerta:</span>
+              </label>
+              <span class="text-[10px] text-slate-500">Marcar los detectados</span>
+            </div>
+
+            <div id="dynamicChecklistContainer" class="space-y-2 text-xs text-slate-300 bg-slate-950/70 p-3 rounded-xl border border-slate-800/80 max-h-60 overflow-y-auto">
+              <!-- Checklist injected dynamically by setEvaluationScope() -->
+            </div>
+          </div>
+
+          <!-- Free Description -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label id="lblDescripcion" class="block text-xs font-medium text-slate-300">
+                Descripción Detallada del Caso / Evidencia Observada
+              </label>
+              <span class="text-[10px] text-slate-500">Opcional pero recomendado</span>
+            </div>
+            <textarea id="evalDescripcion" rows="3" placeholder="Ej: Entregas impecables pero en clase no logran justificar las decisiones de diseño ni modificar parámetros en vivo..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 resize-y"></textarea>
+          </div>
+
+          <!-- Multiformat File Attachment (+) -->
+          <div class="space-y-2 border-t border-slate-800/80 pt-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+                <i class="fa-solid fa-paperclip text-blue-400"></i>
+                <span>Adjuntar Evidencia Multiformato (+)</span>
+              </span>
+              <label class="cursor-pointer px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-blue-400 border border-slate-700 flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-plus"></i>
+                <span>Subir Archivos</span>
+                <input type="file" id="evalFileInput" onchange="handleEvalFile(event)" class="hidden" accept=".pdf,.docx,.doc,.xlsx,.xls,.csv,.txt,.jpg,.jpeg,.png" multiple>
+              </label>
+            </div>
+            <p class="text-[10px] text-slate-500">Soporta: PDF, Word (.docx), Excel (.xlsx/.csv), Imágenes (JPG/PNG), Tesis o Código.</p>
+
+            <!-- File Processing Progress Bar (Animated) -->
+            <div id="evalFileProgressBar" class="hidden w-full bg-slate-800 rounded-full h-1.5 overflow-hidden my-2">
+              <div class="bg-gradient-to-r from-blue-500 via-indigo-400 to-emerald-400 h-full w-full animate-pulse"></div>
+            </div>
+
+            <!-- Attachment Preview Container (Multi-file) -->
+            <div id="evalFilesPreview" class="hidden flex flex-wrap gap-2 pt-1"></div>
+          </div>
+
+          <!-- Action Button -->
+          <button id="btnEjecutarTriaje" type="button" onclick="ejecutarTriaje()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 transition active:scale-[0.99]">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span id="btnEjecutarText">Generar Diagnóstico e Intervención</span>
+          </button>
+        </div>
+
+        <!-- RIGHT: Diagnosis Results (7 cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          
+          <!-- Loading State Indicator -->
+          <div id="evalLoading" class="hidden bg-slate-900/90 border border-slate-800 rounded-2xl p-8 text-center space-y-4 shadow-xl animate-pulse">
+            <div class="w-12 h-12 mx-auto rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
+              <i class="fa-solid fa-circle-notch fa-spin text-2xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-200 text-sm sm:text-base">Consultando Motor en Cascada con Razonamiento...</h4>
+              <p id="evalLoadingSubtext" class="text-xs text-slate-400 mt-1">
+                Analizando patrones psicopedagógicos, calibrando fricción metacognitiva y citas de Consensus...
+              </p>
+            </div>
+          </div>
+
+          <!-- Results Container -->
+          <div id="evalResultContainer" class="hidden space-y-4">
+            
+            <!-- Result Top Banner & Actions -->
+            <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs shadow-md">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span class="text-slate-200 font-semibold" id="resultHeaderLabel">Dictamen Psicopedagógico Generado</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="evalModelBadge" class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800 font-mono text-[11px]">
+                  Gemini Frontier
+                </span>
+                <button onclick="copiarDictamen(this)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition" title="Copiar informe al portapapeles">
+                  <i class="fa-regular fa-copy mr-1"></i><span>Copiar</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- The 4 Blocks of Diagnosis (Rendered with marked + DOMPurify) -->
+            <div id="diagnostic-result-content" class="space-y-3.5">
+              <!-- Block 1 -->
+              <div class="bg-slate-900/95 border-l-4 border-blue-500 border-t border-r border-b border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg">
+                <div class="flex items-center gap-2 mb-2 text-blue-400 font-bold text-sm">
+                  <i class="fa-solid fa-chart-pie"></i>
+                  <h4 id="block1Title">1. Diagnóstico Clínico-Educativo</h4>
+                </div>
+                <div id="resBloque1" class="prose prose-invert max-w-none text-xs sm:text-sm text-slate-200 leading-relaxed break-words prose-markdown"></div>
+              </div>
+
+              <!-- Block 2 -->
+              <div class="bg-slate-900/95 border-l-4 border-amber-500 border-t border-r border-b border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg">
+                <div class="flex items-center gap-2 mb-2 text-amber-400 font-bold text-sm">
+                  <i class="fa-solid fa-microscope"></i>
+                  <h4 id="block2Title">2. Mecanismo Psicológico Subyacente (Citas APA)</h4>
+                </div>
+                <div id="resBloque2" class="prose prose-invert max-w-none text-xs sm:text-sm text-slate-200 leading-relaxed break-words prose-markdown"></div>
+              </div>
+
+              <!-- Block 3 -->
+              <div class="bg-slate-900/95 border-l-4 border-emerald-500 border-t border-r border-b border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg">
+                <div class="flex items-center gap-2 mb-2 text-emerald-400 font-bold text-sm">
+                  <i class="fa-solid fa-person-chalkboard"></i>
+                  <h4 id="block3Title">3. Estrategias de Fricción Metacognitiva</h4>
+                </div>
+                <div id="resBloque3" class="prose prose-invert max-w-none text-xs sm:text-sm text-slate-200 leading-relaxed break-words prose-markdown"></div>
+              </div>
+
+              <!-- Block 4 -->
+              <div class="bg-slate-900/95 border-l-4 border-indigo-500 border-t border-r border-b border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg">
+                <div class="flex items-center gap-2 mb-2 text-indigo-400 font-bold text-sm">
+                  <i class="fa-solid fa-hand-holding-heart"></i>
+                  <h4 id="block4Title">4. Contención Afectiva y Soberanía Epistémica</h4>
+                </div>
+                <div id="resBloque4" class="prose prose-invert max-w-none text-xs sm:text-sm text-slate-200 leading-relaxed break-words prose-markdown"></div>
+              </div>
+            </div>
+
+            <!-- MANDATORY BIDIRECTIONAL CONTINUITY BUTTON -->
+            <div class="p-4 bg-gradient-to-r from-blue-950/80 via-slate-900 to-indigo-950/80 border border-blue-800/60 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xl">
+              <div class="space-y-0.5 text-center sm:text-left">
+                <p class="text-xs font-bold text-white flex items-center justify-center sm:justify-start gap-1.5">
+                  <i class="fa-solid fa-arrow-right-arrow-left text-blue-400"></i> Flujo Bidireccional de Consultoría
+                </p>
+                <p class="text-[11px] text-slate-300">
+                  Transfiere este caso completo al Consultor en Vivo para crear rúbricas específicas, simular preguntas de examen oral o ajustar consignas.
+                </p>
+              </div>
+              <button type="button" id="btn-continuar-consultor" onclick="window.transferirCasoAConsultor()" class="w-full sm:w-auto py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95">💬 Continuar y Profundizar en el Consultor en Vivo</button>
+            </div>
+
+          </div>
+
+          <!-- Error State with Retry Button -->
+          <div id="evalErrorState" class="hidden bg-red-950/30 border border-red-800/80 rounded-2xl p-6 sm:p-8 text-center space-y-3">
+            <div class="w-12 h-12 mx-auto rounded-full bg-red-900/50 border border-red-700 flex items-center justify-center text-red-400">
+              <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+            </div>
+            <h4 class="font-semibold text-red-200 text-sm sm:text-base">No se pudo completar el diagnóstico</h4>
+            <p id="evalErrorMessage" class="text-xs text-red-300/80 max-w-md mx-auto">
+              Las peticiones en paralelo a los modelos Flash no obtuvieron respuesta válida o se detectó saturación en la red.
+            </p>
+            <div class="pt-2 flex flex-wrap items-center justify-center gap-2">
+              <button type="button" onclick="ejecutarTriaje()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition shadow-lg inline-flex items-center gap-1.5 active:scale-95">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>🔄 Reintentar Consulta</span>
+              </button>
+              <button type="button" onclick="showDiagnosticReportModal()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs border border-slate-700 transition">
+                <span>Ver Informe Detallado</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Empty State Placeholder -->
+          <div id="evalEmptyState" class="bg-slate-900/50 border border-dashed border-slate-800 rounded-2xl p-8 sm:p-12 text-center space-y-3">
+            <div class="w-14 h-14 mx-auto rounded-full bg-slate-800/80 flex items-center justify-center text-slate-500">
+              <i class="fa-solid fa-file-waveform text-2xl"></i>
+            </div>
+            <h4 class="font-semibold text-slate-300 text-sm sm:text-base">Sin diagnóstico generado todavía</h4>
+            <p class="text-xs text-slate-500 max-w-md mx-auto">
+              Configure el alcance (Individual o Grupal), seleccione las señales observables a la izquierda y presione <strong>"Generar Diagnóstico"</strong> para obtener el informe psicopedagógico en 4 bloques.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. TAB: CONSULTOR PEDAGÓGICO EN VIVO (MULTI-SESSION & BIDIRECTIONAL CHAT) -->
+    <section id="view-chat" class="w-full h-[calc(100vh-4rem)] flex flex-col overflow-hidden bg-slate-950 box-border hidden relative">
+      <!-- Chat Header -->
+      <div class="h-12 bg-slate-900/90 border-b border-slate-800 px-3 sm:px-4 flex items-center justify-between flex-shrink-0 backdrop-blur-sm z-10">
+        <div class="flex items-center space-x-2 truncate">
+          <button onclick="toggleChatSidebar()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition shadow-sm" title="Historial de consultas">
+            <span>📁 Chats</span>
+          </button>
+          <span id="currentChatTitle" class="font-semibold text-xs sm:text-sm text-slate-200 truncate max-w-[200px] sm:max-w-md">
+            Consulta Abierta
+          </span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span id="chatModelIndicator" class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400 font-mono text-[10px]">
+            Cascada Flash Auto
+          </span>
+        </div>
+      </div>
+
+      <!-- Collapsible Chat History Sidebar (Hidden by default; overlays as absolute drawer when toggled) -->
+      <aside id="chatSidebar" class="hidden absolute z-30 inset-y-0 left-0 w-72 sm:w-80 bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0 shadow-2xl transition-all duration-300">
+        <!-- New Chat Button -->
+        <div class="p-3 border-b border-slate-800 flex items-center justify-between">
+          <span class="font-bold text-xs text-white flex items-center gap-2">
+            <i class="fa-solid fa-folder-open text-blue-400"></i>
+            <span>Historial de Consultas</span>
+          </span>
+          <button onclick="toggleChatSidebar()" class="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition" title="Cerrar panel">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="p-3 border-b border-slate-800">
+          <button onclick="createNewChatSession(); toggleChatSidebar();" class="w-full py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center justify-center gap-2 transition shadow-sm">
+            <i class="fa-solid fa-plus"></i>
+            <span>Nueva Consulta</span>
+          </button>
+        </div>
+        <!-- Sessions List -->
+        <div class="flex-1 overflow-y-auto p-2 space-y-1" id="chatSessionsList">
+          <!-- Populated dynamically from localStorage -->
+        </div>
+        <!-- Sidebar Footer -->
+        <div class="p-3 border-t border-slate-800 text-[11px] text-slate-500 flex justify-between items-center">
+          <span class="flex items-center gap-1"><i class="fa-solid fa-database"></i> Sesiones Locales</span>
+          <button onclick="clearAllChatSessions()" class="text-red-400 hover:text-red-300 hover:underline">Borrar todo</button>
+        </div>
+      </aside>
+
+      <!-- Main Chat Area (Scrollable Messages) -->
+      <div id="chatMessagesContainer" class="flex-1 overflow-y-auto px-3 sm:px-6 py-4 space-y-4">
+        <!-- Messages populated dynamically -->
+      </div>
+
+      <!-- Chat File Processing Progress Bar (Animated) -->
+      <div id="chatFileProgressBar" class="hidden px-3 sm:px-4 py-1 bg-slate-900 border-t border-slate-800 flex-shrink-0">
+        <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-500 via-indigo-400 to-emerald-400 h-full w-full animate-pulse"></div>
+        </div>
+      </div>
+
+      <!-- Chat Attached Files Preview (Multi-file) -->
+      <div id="chatFilesPreview" class="hidden px-3 sm:px-4 py-1.5 bg-slate-900 border-t border-slate-800 flex flex-wrap gap-2 text-xs flex-shrink-0">
+        <!-- Rendered preview chips -->
+      </div>
+
+      <!-- Smart Suggestions Bar with Info Tooltips -->
+      <div class="flex-shrink-0 bg-slate-900/95 border-t border-slate-800">
+        <div class="flex gap-2 overflow-x-auto py-1 px-3 sm:px-4 no-scrollbar text-xs">
+          <span class="text-[11px] text-slate-400 font-medium whitespace-nowrap flex items-center gap-1 py-1">
+            <i class="fa-solid fa-lightbulb text-amber-400"></i> Sugerencias:
+          </span>
+          <div class="flex items-center bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-2.5 py-1 text-xs text-slate-200 whitespace-nowrap transition cursor-pointer flex-shrink-0">
+            <span onclick="insertSuggestion('Diseña una Rúbrica de Procesos (Draft-First) para evaluar el pensamiento crítico y la trazabilidad de borradores en una entrega final.')">Rúbrica de Procesos</span>
+            <button onclick="showTechniqueModal('rubrica')" class="ml-1.5 text-blue-400 hover:text-blue-300" title="Ver explicación de la técnica">
+              <i class="fa-solid fa-circle-info"></i>
+            </button>
+          </div>
+          <div class="flex items-center bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-2.5 py-1 text-xs text-slate-200 whitespace-nowrap transition cursor-pointer flex-shrink-0">
+            <span onclick="insertSuggestion('Genera una batería de 4 preguntas de Defensa Oral Socrática para comprobar si el estudiante comprende los fundamentos o hubo Cognitive Outsourcing.')">Defensa Oral Socrática</span>
+            <button onclick="showTechniqueModal('defensa')" class="ml-1.5 text-blue-400 hover:text-blue-300" title="Ver explicación de la técnica">
+              <i class="fa-solid fa-circle-info"></i>
+            </button>
+          </div>
+          <div class="flex items-center bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-2.5 py-1 text-xs text-slate-200 whitespace-nowrap transition cursor-pointer flex-shrink-0">
+            <span onclick="insertSuggestion('¿Cómo aplicar el protocolo de contención afectiva de Chan (2025) para reducir la culpa y ansiedad por IA en alumnos de alto rendimiento?')">Mitigación de Culpa (Chan 2025)</span>
+            <button onclick="showTechniqueModal('culpa')" class="ml-1.5 text-blue-400 hover:text-blue-300" title="Ver explicación de la técnica">
+              <i class="fa-solid fa-circle-info"></i>
+            </button>
+          </div>
+          <div class="flex items-center bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-2.5 py-1 text-xs text-slate-200 whitespace-nowrap transition cursor-pointer flex-shrink-0">
+            <span onclick="insertSuggestion('Diseña un taller grupal de Auditoría de Alucinaciones donde los alumnos deban cazar y corregir errores conceptuales sutiles inyectados en respuestas de LLMs.')">Auditoría de Alucinaciones</span>
+            <button onclick="showTechniqueModal('auditoria')" class="ml-1.5 text-blue-400 hover:text-blue-300" title="Ver explicación de la técnica">
+              <i class="fa-solid fa-circle-info"></i>
+            </button>
+          </div>
+          <div class="flex items-center bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-2.5 py-1 text-xs text-slate-200 whitespace-nowrap transition cursor-pointer flex-shrink-0">
+            <span onclick="insertSuggestion('Propón una estrategia de Ingeniería Inversa en equipos para rediseñar una consigna propensa a resolución por ChatGPT.')">Ingeniería Inversa Grupal</span>
+            <button onclick="showTechniqueModal('inversa')" class="ml-1.5 text-blue-400 hover:text-blue-300" title="Ver explicación de la técnica">
+              <i class="fa-solid fa-circle-info"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat Input Form -->
+        <div class="sticky bottom-0 w-full bg-slate-900 border-t border-slate-800 p-2 sm:p-3 z-20 pb-safe">
+          <div class="flex items-end gap-2">
+            <label class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 cursor-pointer transition flex items-center justify-center flex-shrink-0" title="Adjuntar documento o imagen (+)">
+              <i class="fa-solid fa-paperclip text-sm"></i>
+              <input type="file" id="chatFileInput" onchange="handleChatFile(event)" class="hidden" accept=".pdf,.docx,.doc,.xlsx,.xls,.csv,.txt,.jpg,.jpeg,.png" multiple>
+            </label>
+            <textarea id="chat-input-textarea" rows="1" onkeydown="handleChatKeydown(event)" placeholder="Escriba su consulta docente, pida consignas, rúbricas o seguimiento..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 resize-none max-h-36 overflow-y-auto"></textarea>
+            <button onclick="sendChatMessage()" id="btnSendChat" class="p-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition flex-shrink-0 shadow-md">
+              <span>Enviar</span>
+              <i class="fa-solid fa-paper-plane text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. TAB: BIBLIOTECA DE FRICCIÓN METACOGNITIVA -->
+    <section id="view-biblioteca" class="w-full max-w-5xl mx-auto p-3 sm:p-6 space-y-6 hidden">
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-book-bookmark text-emerald-400"></i> Plantillas de Fricción Metacognitiva Listas para el Aula
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">
+          Instrumentos didácticos para impedir la delegación pasiva y restaurar la soberanía del estudiante o equipo de trabajo.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Template 1 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3 shadow-lg flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 font-semibold">Protocolo Draft-First</span>
+              <span class="text-xs text-slate-500">Chen & Alibakhshi (2025)</span>
+            </div>
+            <h3 class="font-bold text-slate-200 text-sm sm:text-base">Matriz de Borrador Previo No Digital</h3>
+            <p class="text-xs text-slate-400">Obliga al alumno a entregar un esquema conceptual o boceto manuscrito antes de permitirse interactuar con cualquier IA generativa.</p>
+          </div>
+          <button onclick="copiarTemplate('draftFirst', this)" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center justify-center gap-1.5 transition">
+            <i class="fa-regular fa-copy"></i> Copiar Plantilla al Portapapeles
+          </button>
+        </div>
+
+        <!-- Template 2 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3 shadow-lg flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-blue-950 text-blue-400 border border-blue-800 font-semibold">Evaluación de Procesos</span>
+              <span class="text-xs text-slate-500">Shen et al. (2026)</span>
+            </div>
+            <h3 class="font-bold text-slate-200 text-sm sm:text-base">Bitácora de Trazabilidad de Prompts y Crítica</h3>
+            <p class="text-xs text-slate-400">Rúbrica donde el 50% de la nota pondera la auditoría reflexiva de los errores, alucinaciones y sesgos del LLM.</p>
+          </div>
+          <button onclick="copiarTemplate('bitacoraPrompts', this)" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center justify-center gap-1.5 transition">
+            <i class="fa-regular fa-copy"></i> Copiar Plantilla al Portapapeles
+          </button>
+        </div>
+
+        <!-- Template 3 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3 shadow-lg flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-400 border border-amber-800 font-semibold">Defensa Oral Rápida</span>
+              <span class="text-xs text-slate-500">Vendrell & Johnston (2026)</span>
+            </div>
+            <h3 class="font-bold text-slate-200 text-sm sm:text-base">Protocolo de Comprobación Socrática Rápida (5 min)</h3>
+            <p class="text-xs text-slate-400">3 preguntas de variación de parámetros para desenmascarar la ilusión de competencia e identificar Cognitive Outsourcing.</p>
+          </div>
+          <button onclick="copiarTemplate('socraticDefense', this)" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center justify-center gap-1.5 transition">
+            <i class="fa-regular fa-copy"></i> Copiar Plantilla al Portapapeles
+          </button>
+        </div>
+
+        <!-- Template 4 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3 shadow-lg flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-950 text-purple-400 border border-purple-800 font-semibold">Contención Afectiva</span>
+              <span class="text-xs text-slate-500">Chan (2025) / Tian (2026)</span>
+            </div>
+            <h3 class="font-bold text-slate-200 text-sm sm:text-base">Pauta de Desculpabilización y Agencia Ética</h3>
+            <p class="text-xs text-slate-400">Guía docente para abordar a estudiantes con ansiedad por uso de IA o síndrome del impostor digital sin punitivismo ciego.</p>
+          </div>
+          <button onclick="copiarTemplate('afectiva', this)" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center justify-center gap-1.5 transition">
+            <i class="fa-regular fa-copy"></i> Copiar Plantilla al Portapapeles
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. TAB: MOTOR EN CASCADA (BENCHMARKS Y RESILIENCIA) -->
+    <section id="view-cascada" class="w-full max-w-5xl mx-auto p-3 sm:p-6 space-y-6 hidden">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-blue-400"></i> Motor en Cascada Resiliente (Benchmarks 2026)
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">
+            Enrutamiento inteligente con conmutación instantánea ante cuotas agotadas (429) o sobrecarga (503).
+          </p>
+        </div>
+        <button onclick="refreshModelsList()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-arrows-rotate"></i> Re-escanear Modelos
+        </button>
+      </div>
+
+      <!-- 4 Tier Hierarchy Cards (Familia Flash) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="p-3.5 bg-slate-900 border border-blue-900/60 rounded-xl space-y-1">
+          <span class="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Prioridad 1: Flash Alta Potencia</span>
+          <p class="text-xs text-slate-200 font-semibold">Gemini 3.8 / 3.7 / 3.6 / 3.5 Flash</p>
+          <p class="text-[11px] text-slate-400">Arena Elo >1400 | Razonamiento Rápido</p>
+        </div>
+        <div class="p-3.5 bg-slate-900 border border-indigo-900/60 rounded-xl space-y-1">
+          <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Prioridad 1: Flash Estándar</span>
+          <p class="text-xs text-slate-200 font-semibold">Gemini 3.0 / 2.5 / 2.0 Flash / Latest</p>
+          <p class="text-[11px] text-slate-400">Arena Elo >1300 | Workhorse Equilibrado</p>
+        </div>
+        <div class="p-3.5 bg-slate-900 border border-emerald-900/60 rounded-xl space-y-1">
+          <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Prioridad 2: Flash-Lite Respaldo</span>
+          <p class="text-xs text-slate-200 font-semibold">Gemini 3.5 / 3.1 / 2.5 Flash-Lite</p>
+          <p class="text-[11px] text-slate-400">Baja Latencia | Resiliencia de Cuota</p>
+        </div>
+        <div class="p-3.5 bg-slate-900 border border-amber-900/60 rounded-xl space-y-1">
+          <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Prioridad 2: Fallback Ultraligero</span>
+          <p class="text-xs text-slate-200 font-semibold">Gemini Flash-Lite Latest / 1.5-8B</p>
+          <p class="text-[11px] text-slate-400">Menor cuota | Resiliencia Total</p>
+        </div>
+      </div>
+
+      <!-- Realtime Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+        <div class="p-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+          <h3 class="font-bold text-sm text-slate-200">Ruta de Cascada Activa en Tiempo Real</h3>
+          <span id="modelsCountBadge" class="text-xs px-2 py-0.5 rounded bg-blue-900/50 text-blue-300 border border-blue-800">Cargando modelos...</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950 text-slate-400 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="p-3">Prioridad</th>
+                <th class="p-3">Modelo</th>
+                <th class="p-3">Nivel de Capacidad</th>
+                <th class="p-3">Benchmark Est.</th>
+                <th class="p-3">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="cascadeModelsTableBody" class="divide-y divide-slate-800/60">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. TAB: EVIDENCIA CIENTÍFICA (28 PAPERS) -->
+    <section id="view-evidencia" class="w-full max-w-5xl mx-auto p-3 sm:p-6 space-y-6 hidden">
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-graduation-cap text-indigo-400"></i> Corpus Teórico y Evidencia Científica (Consensus Database)
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">
+          Glosario interactivo de los 28 estudios empíricos y marcos teóricos que fundamentan las decisiones del sistema.
+        </p>
+      </div>
+
+      <!-- Declaración de Sinceridad y Rigor Epistemológico -->
+      <div class="mb-6 p-4 rounded-xl bg-blue-950/40 border border-blue-800/60 text-slate-200">
+        <div class="flex items-center gap-2 mb-2 text-blue-400 font-semibold text-sm sm:text-base">
+          <span>📜</span>
+          <h4>Declaración de Sinceridad y Rigor Epistemológico</h4>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed text-justify break-words">
+          Esta aplicación no realiza selecciones reducidas ni sesgadas. Opera fundamentada en el corpus íntegro de 35 investigaciones científicas: los 28 artículos empíricos internacionales indexados mediante Consensus y los fundamentos ontológicos, clínicos y metodológicos procedentes del trabajo de curso titulado:
+        </p>
+        <div class="my-3 p-3 bg-slate-900/90 rounded-lg border border-slate-800 text-xs sm:text-sm text-blue-300 font-medium break-words leading-relaxed">
+          «IMPACTO PSICOLÓGICO DE LA INTERACCIÓN COTIDIANA CON IA EN LA CONFIGURACIÓN DEL YO ALGORÍTMICO EN ESTUDIANTES UNIVERSITARIOS»<br>
+          <span class="text-slate-400 font-normal">Autores: María Karla Gerada Pérez y Carlos Miguel Valdés Rodríguez (Universidad Central «Marta Abreu» de Las Villas).</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed break-words">
+          Cada diagnóstico e intervención docente consulta activamente esta base de conocimientos para garantizar recomendaciones con validez científica demostrable.
+        </p>
+      </div>
+
+      <!-- Filter Input -->
+      <div class="relative">
+        <i class="fa-solid fa-search absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+        <input type="text" id="filterEvidenceInput" oninput="filterEvidence(this.value)" placeholder="Buscar por autor, concepto (ej: Cognitive Outsourcing, Chan, Dunning-Kruger, 4E, Vygotsky)..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+      </div>
+
+      <!-- Evidence Cards Grid -->
+      <div id="evidenceCardsGrid" class="w-full max-w-full px-2 sm:px-4 space-y-4">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- 6. TAB: MANUAL DE USO INTERACTIVO -->
+    <section id="view-guia" class="w-full max-w-4xl mx-auto p-3 sm:p-6 space-y-6 hidden">
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-sky-400"></i> Manual Operativo para el Docente
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">
+          Guía pedagógica integral para utilizar el Asesor Psicopedagógico en el aula y en evaluaciones de alto impacto.
+        </p>
+      </div>
+
+      <div class="space-y-4 text-xs sm:text-sm text-slate-300">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-2 shadow-lg">
+          <h3 class="font-bold text-blue-400 text-sm sm:text-base flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-blue-900 flex items-center justify-center text-xs text-white">1</span>
+            Configuración de la API Key de Google AI Studio
+          </h3>
+          <p>Haga clic en el botón superior derecho <strong>"Configurar API Key"</strong> e ingrese su clave gratuita de Google AI Studio. La clave se almacena exclusivamente en el almacenamiento local seguro de su navegador (<code>localStorage</code>) y nunca viaja a servidores intermedios.</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-2 shadow-lg">
+          <h3 class="font-bold text-blue-400 text-sm sm:text-base flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-blue-900 flex items-center justify-center text-xs text-white">2</span>
+            Evaluador Clínico: Caso Individual vs. Grupo / Aula Completa
+          </h3>
+          <p>Utilice el selector de alcance para diagnosticar tanto a un <strong>estudiante individual</strong> (analizando su nivel de descarga cognitiva y contención afectiva) como a un <strong>grupo completo</strong> (detectando homogeneización masiva, colapso de debates y dinámicas colectivas de pérdida de soberanía).</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-2 shadow-lg">
+          <h3 class="font-bold text-blue-400 text-sm sm:text-base flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-blue-900 flex items-center justify-center text-xs text-white">3</span>
+            Carga Multiformato de Evidencias (+)
+          </h3>
+          <p>Tanto en el Evaluador como en el Consultor en Vivo, puede presionar el botón de clip o (+) para adjuntar <strong>PDFs, documentos Word (.docx), tablas Excel (.xlsx/.csv), fotos de exámenes manuscritos o código</strong>. El sistema procesa los contenidos y los integra en el análisis diagnóstico.</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-2 shadow-lg">
+          <h3 class="font-bold text-blue-400 text-sm sm:text-base flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-blue-900 flex items-center justify-center text-xs text-white">4</span>
+            Flujo Bidireccional de Consultoría
+          </h3>
+          <p>Al generar un diagnóstico, presione el botón <code>💬 Continuar y Profundizar en el Consultor en Vivo</code>. El caso se transferirá automáticamente al chat, permitiéndole solicitar rúbricas analíticas, exámenes orales de 5 minutos o adaptaciones pedagógicas personalizadas.</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-2 shadow-lg">
+          <h3 class="font-bold text-blue-400 text-sm sm:text-base flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-blue-900 flex items-center justify-center text-xs text-white">5</span>
+            Glosario Bilingüe y Marco de Fricción Metacognitiva
+          </h3>
+          <p>El sistema traduce y define al español cualquier término técnico (<em>Cognitive Outsourcing</em>, <em>Sovereignty Trap</em>, <em>Epistemic Debt</em>, etc.) y fundamenta cada estrategia en los 28 papers de Consensus, garantizando rigor científico y calidez humana.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: API KEY CONFIG -->
+  <div id="apiKeyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-base text-white flex items-center gap-2">
+          <i class="fa-solid fa-key text-amber-400"></i> API Key de Google AI Studio
+        </h3>
+        <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Para activar la cascada con modelos Flash de alta velocidad y estabilidad en la capa gratuita, ingrese su API Key de Google AI Studio.
+      </p>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Clave de API</label>
+        <input type="password" id="inputApiKey" placeholder="AIzaSy..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 font-mono focus:outline-none focus:border-blue-500">
+      </div>
+
+      <div class="p-3 bg-blue-950/40 border border-blue-900/50 rounded-lg text-[11px] text-blue-300 flex items-start gap-2">
+        <i class="fa-solid fa-lock mt-0.5 text-blue-400"></i>
+        <span>Almacenamiento seguro 100% en su navegador (localStorage). Su clave nunca viaja a servidores externos.</span>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeApiKeyModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition">Cancelar</button>
+        <button onclick="saveApiKey()" class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition">Guardar y Escanear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TECHNIQUE EXPLANATION -->
+  <div id="techniqueModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 id="techniqueModalTitle" class="font-bold text-base text-white flex items-center gap-2">
+          Explicación de la Técnica
+        </h3>
+        <button onclick="closeTechniqueModal()" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="techniqueModalBody" class="prose-markdown text-xs text-slate-300 space-y-2">
+        <!-- Injected via JS -->
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <button onclick="closeTechniqueModal()" class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT CORE -->
+  <script>
+    // --- GLOBAL STATE ---
+    let currentScope = 'individual'; // 'individual' | 'group'
+    let currentTab = 'evaluador';
+    let apiKey = localStorage.getItem('edu_ai_gemini_api_key') || '';
+    let availableCascadeModels = [];
+    let evalFileAttachment = null; // { name, size, type, data, isMedia, textContent }
+    let chatFileAttachment = null;
+    let lastEvaluationData = null;
+
+    // Chat sessions state
+    let chatSessions = JSON.parse(localStorage.getItem('edu_ai_chat_sessions') || '[]');
+    let currentSessionId = localStorage.getItem('edu_ai_current_session_id') || null;
+
+    // --- CONSENSUS 28 PAPERS EVIDENCE DATABASE ---
+        // --- CONSENSUS 28 PAPERS EVIDENCE DATABASE (GROUNDING RIGUROSO) ---
+    const EVIDENCE_PAPERS = [
+      {
+        id: 1,
+        author: "Fan et al. (2024)",
+        title: "Metacognitive Laziness & Performance Paradox",
+        desc: "Demuestra la paradoja del rendimiento: el uso acrítico de LLMs genera pereza metacognitiva (Metacognitive Laziness), contrayendo el esfuerzo deliberativo en un 34% y creando una ilusión superficial de dominio donde la fluidez sintáctica enmascara vacíos conceptuales.",
+        tags: ["Metacognitive Laziness", "Performance Paradox", "Cognitive Outsourcing"]
+      },
+      {
+        id: 2,
+        author: "Fan et al. (2026)",
+        title: "In-Class AI Use: Cognitive Relief vs. Cognitive Offloading",
+        desc: "Distingue el alivio cognitivo legítimo (reducción de carga extrínseca) de la descarga cognitiva erosiva (Offloading). La delegación sostenida atrofia la capacidad de estructurar problemas abiertos cuando se retira el andamiaje algorítmico.",
+        tags: ["Cognitive Relief", "Cognitive Offloading", "Epistemic Dependence"]
+      },
+      {
+        id: 3,
+        author: "Fan & Gao (2026)",
+        title: "AI-Mediated Metacognitive Interventions in Writing",
+        desc: "Intervenciones pedagógicas estructuradas que imponen momentos de pausa reflexiva obligatoria durante la redacción asistida por IA para salvaguardar la agencia epistémica del estudiante y evitar la asimilación pasiva.",
+        tags: ["Metacognitive Interventions", "Writing", "Agencia Epistémica"]
+      },
+      {
+        id: 4,
+        author: "Zhang et al. (2025)",
+        title: "Higher-Order Thinking and Problem-Solving Erosion",
+        desc: "Constata una erosión estadísticamente significativa en habilidades de pensamiento de orden superior (análisis, evaluación y síntesis) cuando la IA asume la formulación o estructuración preliminar del problema.",
+        tags: ["Higher-order Thinking", "Problem-Solving", "Erosión Cognitiva"]
+      },
+      {
+        id: 5,
+        author: "Zhang et al. (2026)",
+        title: "Unscaffolded GenAI Use on Critical Thinking",
+        desc: "El acceso libre y sin andamiaje metodológico a modelos conversacionales disminuye la disposición al escepticismo crítico y propicia la aceptación acrítica de respuestas plausibles pero superficiales.",
+        tags: ["Unscaffolded AI", "Critical Thinking", "Andamiaje"]
+      },
+      {
+        id: 6,
+        author: "Jia et al. (2025)",
+        title: "False Self-Efficacy & The Dunning-Kruger Effect",
+        desc: "Efecto Dunning-Kruger inducido por IA: los estudiantes sobreestiman su propio conocimiento hasta un 45% al confundir la sofisticación formal de la respuesta generada con su propia competencia epistémica.",
+        tags: ["False Self-efficacy", "Dunning-Kruger", "Metacognición"]
+      },
+      {
+        id: 7,
+        author: "Si et al. (2026)",
+        title: "Cognitive Autonomy Relinquishment in University Students",
+        desc: "La cesión progresiva de autonomía decisional y epistémica frente a asistentes generativos lleva a la atrofia de las habilidades de autorregulación del aprendizaje (Self-Regulated Learning, SRL).",
+        tags: ["Cognitive Autonomy", "Relinquishment", "Autorregulación"]
+      },
+      {
+        id: 8,
+        author: "Zhai et al. (2024)",
+        title: "Systematic Review on Cognitive Degradation from AI Dialogues",
+        desc: "Revisión sistemática de 84 estudios evidenciando que el diálogo conversacional con IA sin fricción deliberada reduce la profundidad semántica y debilita la memoria de trabajo operacional.",
+        tags: ["Cognitive Degradation", "Systematic Review", "Superficial Learning"]
+      },
+      {
+        id: 9,
+        author: "Chan (2025)",
+        title: "AI Guilt and Ethical Impostor Feelings",
+        desc: "Documenta el sufrimiento afectivo, ansiedad evaluativa y síndrome del impostor ético en estudiantes que usan IA, temiendo ser juzgados como fraudulentos por sus docentes ante la ausencia de pautas claras.",
+        tags: ["AI Guilt", "Impostor Feelings", "Afectividad", "Contención"]
+      },
+      {
+        id: 10,
+        author: "Steyvers et al. (2024)",
+        title: "Over-Trust in Authoritative and Verbose LLM Outputs",
+        desc: "La verborrea y el tono seguro y persuasivo de los LLMs inducen un sesgo de verosimilitud (Plausibility Bias) que bloquea la verificación activa y adormece la duda metódica en el aula.",
+        tags: ["Over-trust", "Plausibility Bias", "Verificación"]
+      },
+      {
+        id: 11,
+        author: "Chen & Alibakhshi (2025)",
+        title: "Draft-First, AI-Second Non-Digital Protocol",
+        desc: "Protocolo pedagógico obligatorio de borrador analógico o manuscrito previo a la consulta algorítmica para asegurar la soberanía conceptual y la huella de razonamiento del autor.",
+        tags: ["Draft-First", "Borrador Previo", "Soberanía Epistémica"]
+      },
+      {
+        id: 12,
+        author: "Wang et al. (2026)",
+        title: "AI Dependence Mediating Academic Stress to Burnout and Anxiety",
+        desc: "Modelo estructural que demuestra que la dependencia funcional de la IA no mitiga el estrés estudiantil, sino que cronifica la ansiedad ante tareas no asistidas y precipita el agotamiento académico.",
+        tags: ["AI Dependence", "Academic Stress", "Burnout", "Ansiedad"]
+      },
+      {
+        id: 13,
+        author: "Wang et al. (2026)",
+        title: "Meta-Analysis on AI and Academic Anxiety",
+        desc: "Metaanálisis que corrobora que la falta de protocolos de transparencia y criterios claros de evaluación eleva la angustia y polariza el rendimiento entre los alumnos.",
+        tags: ["Meta-Analysis", "Academic Anxiety", "Clima de Aula"]
+      },
+      {
+        id: 14,
+        author: "Urban et al. (2025)",
+        title: "Metacognitive Blindness and Verification Failures",
+        desc: "Identifica la ceguera metacognitiva: incapacidad de detectar alucinaciones sutiles y falacias plausibles generadas por el modelo, exigiendo auditorías forenses guiadas por rúbrica.",
+        tags: ["Metacognitive Blindness", "Hallucination Audit", "Auditoría Forense"]
+      },
+      {
+        id: 15,
+        author: "Vendrell & Johnston (2026)",
+        title: "Scaffolding Critical Thinking with GenAI",
+        desc: "Protocolo de defensa oral socrática y andamiaje dialéctico donde la IA formula contra-argumentos que el estudiante debe refutar públicamente para evidenciar dominio genuino.",
+        tags: ["Scaffolding", "Socratic Defense", "Pensamiento Crítico"]
+      },
+      {
+        id: 16,
+        author: "Zoromba & El-Gazar (2026)",
+        title: "Fragile Competence and Professional Identity Erosion",
+        desc: "La competencia frágil surge cuando los estudiantes completan entregas impecables con IA pero son incapaces de transferir los conocimientos a contextos prácticos reales e inmediatos sin asistencia.",
+        tags: ["Fragile Competence", "Competencia Frágil", "Identidad Profesional"]
+      },
+      {
+        id: 17,
+        author: "Tian (2026)",
+        title: "Educational Anxiety and Mental Health in AI Education",
+        desc: "Analiza la fatiga de prompting y la ansiedad generada por la constante comparación con productos sintéticos perfeccionados por algoritmos en entornos académicos competitivos.",
+        tags: ["Educational Anxiety", "Decision Fatigue", "Salud Mental"]
+      },
+      {
+        id: 18,
+        author: "Shekhar & Saurombe (2026)",
+        title: "Algorithmic Anxiety and Psychological Contract Breach",
+        desc: "Quiebre del contrato psicológico implícito entre docente y alumno: la sospecha constante de deshonestidad fractura la relación pedagógica y genera paranoia institucional punitiva.",
+        tags: ["Algorithmic Anxiety", "Psychological Contract", "Vínculo Pedagógico"]
+      },
+      {
+        id: 19,
+        author: "Ayed et al. (2025)",
+        title: "Epistemic Vulnerability and Automation Bias",
+        desc: "Investiga cómo el sesgo de automatización hace que los alumnos acepten premisas no verificadas del modelo debido a la fatiga cognitiva.",
+        tags: ["Automation Bias", "Epistemic Vulnerability", "Vigilancia Crítica"]
+      },
+      {
+        id: 20,
+        author: "Karaaslan & Erişken (2026)",
+        title: "Artificial Intelligence Anxiety and Academic Self-Efficacy",
+        desc: "Evalúa la paradoja de la autoeficacia académica: cómo la asistencia sin fricción reduce la resiliencia metacognitiva ante consignas complejas.",
+        tags: ["AI Anxiety", "Self-Efficacy", "Resiliencia Cognitiva"]
+      },
+      {
+        id: 21,
+        author: "Jordan et al. (2022)",
+        title: "Critical Metacognition in Human-AI Interaction",
+        desc: "Marco teórico-práctico para cultivar la metacognición crítica como competencia transversal frente a asistentes de razonamiento artificial.",
+        tags: ["Critical Metacognition", "Human-AI Interaction", "Autorregulación"]
+      },
+      {
+        id: 22,
+        author: "Lee et al. (2025)",
+        title: "Generative AI Overreliance in Higher Education",
+        desc: "Estudio longitudinal que demuestra la disminución en la retención conceptual a largo plazo en cohortes con sobre-dependencia algorítmica.",
+        tags: ["Overreliance", "Retención Conceptual", "Longitudinal"]
+      },
+      {
+        id: 23,
+        author: "Kim et al. (2025)",
+        title: "Loss of Conceptual Synthesis in LLM-Assisted Learning",
+        desc: "Comprueba empíricamente el debilitamiento de la síntesis analítica en redacción de ensayos académicos asistidos por modelos de lenguaje.",
+        tags: ["Conceptual Synthesis", "Ensayo Académico", "Síntesis"]
+      },
+      {
+        id: 24,
+        author: "Tsakeni et al. (2025)",
+        title: "Pedagogical Resistance and Teacher Scaffolding",
+        desc: "Estrategias de andamiaje docente y resistencia pedagógica constructiva para convertir a los LLMs en objetos de análisis epistemológico.",
+        tags: ["Teacher Scaffolding", "Resistencia Pedagógica", "Andamiaje"]
+      },
+      {
+        id: 25,
+        author: "Steinert et al. (2023)",
+        title: "Ethical Autonomy and Epistemic Agency in AI-Rich Classrooms",
+        desc: "Fundamentación de la agencia epistémica y la autonomía ética del aprendiz en aulas saturadas de agentes de inteligencia artificial.",
+        tags: ["Ethical Autonomy", "Epistemic Agency", "Ética Educativa"]
+      },
+      {
+        id: 26,
+        author: "Shen et al. (2026)",
+        title: "Process-Based Rubrics for Prompt Traceability and Critical Evaluation",
+        desc: "Rúbricas analíticas de proceso que evalúan el 50% de la calificación sobre la bitácora de prompts, borradores y justificación de decisiones.",
+        tags: ["Process Rubrics", "Prompt Traceability", "Evaluación Formativa"]
+      },
+      {
+        id: 27,
+        author: "Chai & Sha (2025)",
+        title: "Human-in-the-Loop Inquiry in STEM Higher Education",
+        desc: "Modelo Human-in-the-Loop para asegurar que el estudiante mantenga el control heurístico en resolución de problemas en ciencias e ingeniería.",
+        tags: ["Human-in-the-Loop", "STEM", "Heurística"]
+      },
+      {
+        id: 28,
+        author: "Xia (2026)",
+        title: "Cognitive Friction and Desirable Difficulties in Generative Learning",
+        desc: "Demuestra que la inyección intencional de dificultades deseables y pausas de fricción incrementa la transferencia y consolidación en un 41%.",
+        tags: ["Cognitive Friction", "Desirable Difficulties", "Transferencia"]
+      },
+      {
+        id: 29,
+        author: "Noller (2025)",
+        title: "4E Cognition & AI as an Extension Relation",
+        desc: "Marco de la Cognición 4E (Embodied, Embedded, Enacted, Extended): la IA no debe sustituir el razonamiento orgánico, sino actuar como una prótesis dialógica que potencie la corporalidad y el contexto social.",
+        tags: ["4E Cognition", "Extended Mind", "Epistemic Extension"]
+      },
+      {
+        id: 30,
+        author: "Högberg (2026)",
+        title: "Cognitive Co-Evolution & Neuroplasticity",
+        desc: "Examina los efectos en la plasticidad cerebral de delegar la síntesis y la memoria operativa: aboga por la 'fricción cognitiva intencional' y las dificultades deseables para preservar redes neuronales críticas.",
+        tags: ["Cognitive Co-evolution", "Neuroplasticity", "Fricción Cognitiva"]
+      },
+      {
+        id: 31,
+        author: "Adorni (2025)",
+        title: "Cyber Humanism & Algorithmic Citizenship",
+        desc: "Propuesta de humanismo cibernético: formar al estudiante como ciudadano algorítmico capaz de auditar, resistir y dirigir la tecnología en lugar de ser modelado pasivamente por cajas negras.",
+        tags: ["Cyber Humanism", "Algorithmic Citizenship", "Soberanía Digital"]
+      },
+      {
+        id: 32,
+        author: "Klein & Klein (2025)",
+        title: "The Hollowed Mind & The Sovereignty Trap",
+        desc: "Describe 'la mente vaciada' producida al eliminar la lucha y frustración cognitiva inherente al aprendizaje genuino (Desirable Difficulties), atrapando al estudiante en una trampa de pérdida de soberanía.",
+        tags: ["The Hollowed Mind", "Sovereignty Trap", "Desirable Difficulties"]
+      },
+      {
+        id: 33,
+        author: "Sankaranarayanan (2026)",
+        title: "Epistemic Debt & Fragile Experts",
+        desc: "Concepto de Deuda Epistémica: postergar el esfuerzo de comprensión genera un déficit cognitivo acumulativo que colapsa cuando se enfrenta un desafío del mundo real sin tecnología intermediaria.",
+        tags: ["Epistemic Debt", "Fragile Experts", "Deuda Epistémica"]
+      },
+      {
+        id: 34,
+        author: "Peng et al. (2026)",
+        title: "Empowerment vs. Dependency in Intelligent Learning",
+        desc: "Determina el umbral en que la asistencia algorítmica pasa de ser catalizadora de la creatividad (empowerment) a convertirse en prótesis incapacitante (dependency) en sistemas de aprendizaje inteligente.",
+        tags: ["Empowerment", "Dependency", "ZDP Algorítmica"]
+      },
+      {
+        id: 35,
+        author: "Vygotsky, Bozhovich, Renzulli, Sternberg, Terrassier",
+        title: "Enfoque Histórico-Cultural, SSD y Talento Excepcional",
+        desc: "Fundamento ontológico del sistema: la Zona de Desarrollo Próximo (ZDP), la vivencia afectiva (Perezhivanie), la disincronía interna de Terrassier y la teoría triárquica de Sternberg para la soberanía del sujeto.",
+        tags: ["Vygotsky", "Bozhovich", "SSD", "ZDP", "Renzulli", "Terrassier", "Disincronía"]
+      }
+    ];
+
+    // --- INDIVIDUAL VS. GROUP CHECKLISTS ---
+    const CHECKLIST_INDIVIDUAL = [
+      { id: "ind1", label: "<strong>1. Finalización Rápida sin Transferencia:</strong> Entrega técnica impecable en tiempo récord pero incapacidad de explicar conceptos o lógica." },
+      { id: "ind2", label: "<strong>2. AI-First Problem Solving:</strong> Consulta inmediata al LLM sin fase previa de lectura, bocetaje ni deliberación propia." },
+      { id: "ind3", label: "<strong>3. Confianza Inflada (Dunning-Kruger):</strong> Seguridad absoluta en el resultado sin verificación empírica de fuentes o cálculos." },
+      { id: "ind4", label: "<strong>4. Intolerancia al Esfuerzo Cognitivo:</strong> Frustración o parálisis inmediata ante consignas abiertas o sin soporte digital." },
+      { id: "ind5", label: "<strong>5. Culpa / Ansiedad por IA (Chan 2025):</strong> Tensión afectiva, síndrome del impostor o miedo a ser juzgado por usar IA." }
+    ];
+
+    const CHECKLIST_GROUP = [
+      { id: "grp1", label: "<strong>1. Homogeneización Masiva de Entregas:</strong> Soluciones idénticas en estructura léxica, código o sesgo en más del 50% de la clase." },
+      { id: "grp2", label: "<strong>2. Colapso del Debate Colectivo:</strong> Plenarias silenciosas, apatía en la deliberación dialéctica o lectura de respuestas de ChatGPT." },
+      { id: "grp3", label: "<strong>3. Descarga Cognitiva Normalizada:</strong> Cultura grupal donde el esfuerzo analítico es percibido como pérdida inútil de tiempo." },
+      { id: "grp4", label: "<strong>4. Bloqueo Colectivo sin Dispositivos:</strong> Desconcierto o protesta generalizada cuando se retiran los computadores o teléfonos." },
+      { id: "grp5", label: "<strong>5. Tensión Afectiva y Sospecha Cruzada:</strong> Ansiedad colectiva por detección de IA, acusaciones de fraude entre pares y cinismo." }
+    ];
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+      // Setup marked options for table generation & code blocks
+      marked.setOptions({
+        gfm: true,
+        breaks: true,
+        headerIds: false
+      });
+
+      // Render default checklist
+      renderDynamicChecklist();
+      renderEvidenceCards();
+      initChatSessions();
+      updateApiKeyUI();
+      refreshModelsList();
+    });
+
+    // --- MOBILE DRAWER NAVIGATION CONTROLLERS ---
+    function toggleMobileDrawer() {
+      const drawer = document.getElementById('mobileDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      const isOpen = !drawer.classList.contains('-translate-x-full');
+      
+      if (isOpen) {
+        closeMobileDrawer();
+      } else {
+        drawer.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeMobileDrawer() {
+      const drawer = document.getElementById('mobileDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      drawer.classList.add('-translate-x-full');
+      backdrop.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function switchTabAndCloseDrawer(tabId) {
+      switchTab(tabId);
+      closeMobileDrawer();
+    }
+
+    // --- TAB SWITCHING ---
+    function switchTab(tabId) {
+      if (tabId === 'consultor') tabId = 'chat';
+      currentTab = tabId;
+
+      // Update tabs buttons UI
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+        btn.classList.add('text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-800');
+      });
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+        activeBtn.classList.remove('text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-800');
+      }
+
+      // Hide all views
+      ['evaluador', 'chat', 'biblioteca', 'cascada', 'evidencia', 'guia'].forEach(id => {
+        const el = document.getElementById(`view-${id}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      const activeView = document.getElementById(`view-${tabId}`);
+      const mainEl = document.querySelector('main');
+
+      if (tabId === 'chat') {
+        if (mainEl) {
+          mainEl.classList.remove('overflow-y-auto');
+          mainEl.classList.add('overflow-hidden', 'h-full');
+        }
+        if (activeView) {
+          activeView.classList.remove('hidden');
+          activeView.classList.add('h-full', 'flex', 'flex-col', 'overflow-hidden');
+        }
+        renderCurrentChatMessages();
+        setTimeout(scrollChatToBottom, 100);
+      } else {
+        if (mainEl) {
+          mainEl.classList.add('overflow-y-auto');
+          mainEl.classList.remove('overflow-hidden');
+        }
+        if (activeView) {
+          activeView.classList.remove('hidden');
+        }
+      }
+
+      closeMobileDrawer();
+    }
+
+    // --- SCOPE SELECTOR (INDIVIDUAL VS GROUP) ---
+    function setEvaluationScope(scope) {
+      currentScope = scope;
+      const btnInd = document.getElementById('scopeBtnIndividual');
+      const btnGrp = document.getElementById('scopeBtnGroup');
+      const formScopeTitle = document.getElementById('formScopeTitle');
+      const scopeBadge = document.getElementById('scopeBadge');
+      const checklistHeader = document.getElementById('checklistHeader');
+      const lblDescripcion = document.getElementById('lblDescripcion');
+      const block1Title = document.getElementById('block1Title');
+      const block2Title = document.getElementById('block2Title');
+      const block3Title = document.getElementById('block3Title');
+      const block4Title = document.getElementById('block4Title');
+
+      if (scope === 'individual') {
+        btnInd.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 bg-blue-600 text-white shadow-sm';
+        btnGrp.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300';
+        formScopeTitle.textContent = 'Parámetros del Caso Individual';
+        scopeBadge.textContent = 'Individual';
+        scopeBadge.className = 'text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800';
+        checklistHeader.textContent = 'Indicadores Observables Individuales:';
+        lblDescripcion.textContent = 'Descripción del Alumno / Evidencia Observada';
+        
+        block1Title.textContent = '1. Diagnóstico Cognitivo-Afectivo';
+        block2Title.textContent = '2. Mecanismo Psicológico Subyacente (Citas APA)';
+        block3Title.textContent = '3. Fricción Metacognitiva para el Aula';
+        block4Title.textContent = '4. Contención Afectiva y Soberanía Epistémica';
+      } else {
+        btnGrp.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 bg-blue-600 text-white shadow-sm';
+        btnInd.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300';
+        formScopeTitle.textContent = 'Parámetros del Grupo / Aula Completa';
+        scopeBadge.textContent = 'Grupo / Aula';
+        scopeBadge.className = 'text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800';
+        checklistHeader.textContent = 'Indicadores Colectivos y Clima de Aula:';
+        lblDescripcion.textContent = 'Descripción de la Dinámica Colectiva / Tareas Entregadas';
+
+        block1Title.textContent = '1. Diagnóstico del Clima y Dinámica Grupal';
+        block2Title.textContent = '2. Mecanismos de Dependencia Colectiva (Consensus)';
+        block3Title.textContent = '3. Intervención Curricular y Didáctica Grupal';
+        block4Title.textContent = '4. Clima Afectivo y Soberanía Colectiva';
+      }
+
+      renderDynamicChecklist();
+    }
+
+    function renderDynamicChecklist() {
+      const container = document.getElementById('dynamicChecklistContainer');
+      const list = currentScope === 'individual' ? CHECKLIST_INDIVIDUAL : CHECKLIST_GROUP;
+      
+      container.innerHTML = list.map(item => `
+        <label class="flex items-start gap-2 cursor-pointer hover:text-white transition p-1 rounded hover:bg-slate-900/50">
+          <input type="checkbox" id="${item.id}" class="mt-1 rounded bg-slate-800 border-slate-700 text-blue-600 focus:ring-0">
+          <span class="text-xs text-slate-300 leading-relaxed">${item.label}</span>
+        </label>
+      `).join('');
+    }
+
+    // --- SAFE MARKDOWN RENDERING WITH DOMPURIFY & TABLE WRAPPERS ---
+    if (typeof marked !== 'undefined' && marked.setOptions) {
+      marked.setOptions({
+        breaks: true,
+        gfm: true
+      });
+    }
+
+    function renderSafeMarkdown(markdownText) {
+      if (!markdownText) return '';
+      // Normalizar texto bruto reparando saltos de línea accidentales en medio de palabras o negritas
+      let cleanText = String(markdownText)
+        .replace(/(\*\*[^\*\r\n]+)\r?\n([a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9\-_,\.:; ]+\*\*)/g, '$1$2')
+        .replace(/(\*\*[^\*\r\n]+)\r?\n+([^\*\r\n]+\*\*)/g, '$1 $2')
+        .replace(/(\w+)-\r?\n(\w+)/g, '$1$2'); // Unir palabras guionadas partidas por saltos de línea
+
+      let rawHtml = marked.parse(cleanText);
+      // Ensure HTML tables have dedicated responsive scroll wrappers
+      rawHtml = rawHtml.replace(/<table>/g, '<div class="table-wrapper"><table>').replace(/<\/table>/g, '</table></div>');
+      return DOMPurify.sanitize(rawHtml);
+    }
+
+    // --- MEMORIA COLECTIVA UNIFICADA (ESTADO GLOBAL COMPARTIDO) ---
+    window.sharedAppMemory = {
+      hasActiveCase: false,
+      caseScope: null, // "Individual" o "Grupo / Aula Completa"
+      area: null,
+      context: null,
+      indicators: [],
+      caseDescription: "",
+      attachedFiles: [], // Nombres, metadatos y contenido/base64 de archivos
+      fullDiagnosticText: "",
+      timestamp: null
+    };
+
+    window.desvincularMemoriaColectiva = function() {
+      window.sharedAppMemory = {
+        hasActiveCase: false,
+        caseScope: null,
+        area: null,
+        context: null,
+        indicators: [],
+        caseDescription: "",
+        attachedFiles: [],
+        fullDiagnosticText: "",
+        timestamp: null
+      };
+      window.activeDiagnosticContext = null;
+      // Remover la tarjeta de la vista si está presente
+      const card = document.getElementById('memory-sync-card');
+      if (card) card.remove();
+      renderCurrentChatMessages();
+      if (typeof showToast === 'function') {
+        showToast('Expediente desvinculado de la memoria colectiva');
+      }
+    };
+
+    // --- MODEL CASCADE & BENCHMARKS (LITE-FIRST ASCENDING FLASH CASCADE) ---
+    const FLASH_CASCADE_PRIORITY = [
+      // 1. PRIMERA PRIORIDAD: Familia Flash-Lite (Lite-First)
+      "gemini-3.5-flash-lite",
+      "gemini-3.1-flash-lite",
+      "gemini-flash-lite-latest",
+      // 2. SEGUNDA PRIORIDAD: Familia Flash ascendente hasta 3.8
+      "gemini-3.5-flash",
+      "gemini-3.6-flash",
+      "gemini-3.7-flash",
+      "gemini-3.8-flash",
+      "gemini-flash-latest"
+    ];
+
+    // Purga total: Descarta de inmediato cualquier modelo incompatible o deprecado
+    const FORBIDDEN_MODEL_PATTERNS = [
+      "pro", "omni", "image", "video", "tts", "audio", "transcribe",
+      "banana", "lyria", "veo", "robotics", "antigravity", "customtools",
+      "computer-use", "preview-0", "gemma", "1.5", "2.0", "2.5", "8b"
+    ];
+
+    // Conjunto de modelos con cuota cero detectada en tiempo de ejecución (HTTP 429 limit: 0)
+    const zeroQuotaModels = new Set();
+    window.lastCascadeAttemptLogs = [];
+
+    function isModelAllowed(modelId) {
+      const clean = String(modelId || '').replace(/^models\//, '').trim().toLowerCase();
+      if (!clean.includes('flash')) return false;
+      for (const pat of FORBIDDEN_MODEL_PATTERNS) {
+        if (clean.includes(pat)) return false;
+      }
+      return true;
+    }
+
+    async function refreshModelsList() {
+      const badge = document.getElementById('modelsCountBadge');
+      const tableBody = document.getElementById('cascadeModelsTableBody');
+      const statusText = document.getElementById('cascadeStatusText');
+      const drawerStatus = document.getElementById('drawerStatusText');
+
+      const key = (apiKey || '').trim();
+      if (!key) {
+        if (badge) {
+          badge.textContent = 'API Key requerida';
+          badge.className = 'text-xs px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800';
+        }
+        if (statusText) statusText.textContent = 'Sin API Key';
+        if (drawerStatus) drawerStatus.textContent = 'Sin Clave';
+        if (tableBody) {
+          tableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">Configure su API Key para sincronizar la cascada Flash en vivo.</td></tr>`;
+        }
+        availableCascadeModels = [...FLASH_CASCADE_PRIORITY];
+        return;
+      }
+
+      if (badge) badge.textContent = 'Verificando modelos Flash...';
+
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        const remoteModels = (data.models || [])
+          .map(m => String(m.name || '').replace(/^models\//, '').trim())
+          .filter(name => isModelAllowed(name) && !zeroQuotaModels.has(name));
+
+        // Prioritize by hierarchy
+        const finalCascade = [];
+        for (const target of FLASH_CASCADE_PRIORITY) {
+          const match = remoteModels.find(m => m === target);
+          if (match && !finalCascade.includes(match)) {
+            finalCascade.push(match);
+          } else if (!finalCascade.includes(target) && !zeroQuotaModels.has(target) && isModelAllowed(target)) {
+            finalCascade.push(target);
+          }
+        }
+
+        availableCascadeModels = finalCascade.length > 0 ? finalCascade : [...FLASH_CASCADE_PRIORITY];
+
+        if (badge) {
+          badge.textContent = `${availableCascadeModels.length} Modelos Flash Activos`;
+          badge.className = 'text-xs px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800';
+        }
+        if (statusText) statusText.textContent = `Cascada: ${availableCascadeModels[0] || 'Flash'} Activo`;
+        if (drawerStatus) drawerStatus.textContent = `${availableCascadeModels.length} Flash Disponibles`;
+
+        renderCascadeModelsTable(availableCascadeModels);
+
+      } catch (err) {
+        console.warn('Fallo al obtener modelos en vivo, usando lista Flash local curada:', err);
+        availableCascadeModels = FLASH_CASCADE_PRIORITY.filter(m => !zeroQuotaModels.has(m) && isModelAllowed(m));
+        if (badge) {
+          badge.textContent = `${availableCascadeModels.length} Flash Offline`;
+          badge.className = 'text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700';
+        }
+        if (statusText) statusText.textContent = `Cascada: Lista Local (${availableCascadeModels.length})`;
+        renderCascadeModelsTable(availableCascadeModels);
+      }
+    }
+
+    function renderCascadeModelsTable(models) {
+      const tableBody = document.getElementById('cascadeModelsTableBody');
+      if (!tableBody) return;
+      tableBody.innerHTML = models.map((m, idx) => {
+        const isLite = m.includes('lite');
+        return `
+          <tr class="border-b border-slate-800 hover:bg-slate-800/40 text-xs">
+            <td class="p-3 font-mono text-blue-400 font-bold">#${idx + 1}</td>
+            <td class="p-3 font-semibold text-slate-200">${m}</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded ${isLite ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'} text-[10px]">${isLite ? 'Flash-Lite' : 'Flash Proceso'}</span></td>
+            <td class="p-3 text-slate-400">10 min (Paralelo)</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800 text-[10px]">Simultáneo Activo</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // --- GEMINI API CALLER WITH CONCURRENT PARALLEL ENGINE & HIERARCHY DISCRIMINATION ---
+    async function callGeminiParallel({ prompt, systemInstruction, attachment, attachments, onModelSwitch }) {
+      const key = (apiKey || '').trim();
+      if (!key) {
+        openApiKeyModal();
+        throw new Error("Por favor, configure su API Key de Google AI Studio antes de continuar.");
+      }
+
+      // Prioridad jerárquica estricta: Familia Flash-Lite primero, luego Flash ascendente hasta 3.8
+      const hierarchyOrder = [
+        "gemini-3.5-flash-lite",
+        "gemini-3.1-flash-lite",
+        "gemini-flash-lite-latest",
+        "gemini-3.5-flash",
+        "gemini-3.6-flash",
+        "gemini-3.7-flash",
+        "gemini-3.8-flash",
+        "gemini-flash-latest"
+      ];
+
+      // Modelos elegibles asegurando exclusión de cero cuota y modelos prohibidos
+      let modelsToQuery = (availableCascadeModels.length > 0 ? availableCascadeModels : hierarchyOrder)
+        .filter(m => isModelAllowed(m) && !zeroQuotaModels.has(m));
+
+      if (modelsToQuery.length === 0) {
+        zeroQuotaModels.clear();
+        modelsToQuery = hierarchyOrder.filter(m => isModelAllowed(m));
+      }
+
+      // Ordenar según la jerarquía establecida
+      modelsToQuery.sort((a, b) => {
+        const idxA = hierarchyOrder.indexOf(a);
+        const idxB = hierarchyOrder.indexOf(b);
+        return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+      });
+
+      // PAYLOAD UNIVERSAL SEGURO (Elimina error 400 y 404: sin role 'system', sin thinkingConfig)
+      const systemText = (systemInstruction || '').trim();
+      const userText = (prompt || '').trim();
+      const promptInyectado = systemText 
+        ? `${systemText}\n\n---\nCASO/CONSULTA DEL DOCENTE:\n${userText}`
+        : userText;
+
+      const parts = [];
+
+      // Adjuntos multimedia / texto
+      const allFiles = [];
+      if (attachments && Array.isArray(attachments)) {
+        allFiles.push(...attachments);
+      } else if (attachment) {
+        allFiles.push(attachment);
+      }
+
+      let hasMediaFiles = false;
+
+      allFiles.forEach(att => {
+        if (att && att.isMedia && (att.base64 || att.data)) {
+          hasMediaFiles = true;
+          // Limpieza rigurosa de Data-URL: envía únicamente base64 pura
+          const fileBase64String = att.base64 || att.data;
+          const rawBase64 = fileBase64String.includes(',') ? fileBase64String.split(',')[1] : fileBase64String;
+          parts.push({
+            inlineData: {
+              mimeType: att.type || (att.name?.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'image/jpeg'),
+              data: rawBase64
+            }
+          });
+        } else if (att && att.textContent) {
+          // Extracción client-side de texto plano (cero peso en red)
+          parts.push({
+            text: `\n\n--- DOCUMENTO ADJUNTO: ${att.name || 'documento'} ---\n${att.textContent}\n--- FIN DOCUMENTO ---\n`
+          });
+        }
+      });
+
+      // Inyección obligatoria de instrucción del sistema dentro de parts del usuario
+      parts.push({ text: promptInyectado });
+
+      const payload = {
+        contents: [
+          {
+            role: "user",
+            parts: parts
+          }
+        ],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 8192
+        }
+      };
+
+      const attemptLogs = [];
+      const TIMEOUT_MS = 600000; // 10 minutos de tiempo máximo prolongado
+
+      // =========================================================================
+      // ESTRATEGIA 1: SI CONTIENE ARCHIVOS ADJUNTOS PESADOS (PDFs / IMÁGENES)
+      // Cascada secuencial optimizada para NO saturar ancho de banda ni sockets
+      // =========================================================================
+      if (hasMediaFiles) {
+        for (let i = 0; i < modelsToQuery.length; i++) {
+          const cleanModel = String(modelsToQuery[i]).replace(/^models\//, '').trim();
+          if (typeof onModelSwitch === 'function') {
+            try {
+              onModelSwitch(`Enviando adjunto al modelo prioritario: ${cleanModel} (${i + 1}/${modelsToQuery.length})...`);
+            } catch(e) {}
+          }
+
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(cleanModel)}:generateContent?key=${encodeURIComponent(key)}`;
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+          const startTime = Date.now();
+
+          try {
+            const response = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+              signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+              let errText = '';
+              let errData = {};
+              try {
+                errText = await response.text();
+                errData = JSON.parse(errText);
+              } catch(e) {
+                errData = { raw: errText };
+              }
+              const errMsg = errData.error?.message || errText || response.statusText || `HTTP ${response.status}`;
+
+              if (response.status === 429 && (errMsg.includes('limit: 0') || errMsg.includes('limit:0') || errMsg.includes('quota'))) {
+                zeroQuotaModels.add(cleanModel);
+                availableCascadeModels = availableCascadeModels.filter(m => m !== cleanModel);
+              }
+
+              attemptLogs.push({
+                model: cleanModel,
+                status: `HTTP ${response.status}`,
+                message: errMsg,
+                duration: `${Date.now() - startTime}ms`
+              });
+              // Continuar con el siguiente modelo de la cascada
+              continue;
+            }
+
+            const result = await response.json();
+            const textCandidate = result.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('\n');
+            if (!textCandidate || !textCandidate.trim()) {
+              attemptLogs.push({
+                model: cleanModel,
+                status: 'Respuesta Vacía',
+                message: 'El modelo devolvió contenido vacío.',
+                duration: `${Date.now() - startTime}ms`
+              });
+              continue;
+            }
+
+            attemptLogs.push({
+              model: cleanModel,
+              status: 'HTTP 200 (Éxito)',
+              message: 'Respuesta completada con éxito',
+              duration: `${Date.now() - startTime}ms`
+            });
+
+            window.lastCascadeAttemptLogs = attemptLogs;
+            window.lastCascadeSuccessModel = cleanModel;
+
+            return {
+              text: textCandidate,
+              modelUsed: cleanModel,
+              badgeText: `⚡ Respondido por: ${cleanModel}`,
+              successfulCount: 1,
+              totalCount: i + 1,
+              logs: attemptLogs
+            };
+
+          } catch (err) {
+            clearTimeout(timeoutId);
+            const isTimeout = err.name === 'AbortError';
+            const statusLabel = isTimeout ? 'Timeout (10 min)' : (err.message.startsWith('HTTP') ? err.message.split(':')[0] : 'Error Red / CORS');
+            const errDetailMsg = isTimeout ? 'El modelo excedió los 10 minutos de tiempo límite.' : err.message;
+
+            attemptLogs.push({
+              model: cleanModel,
+              status: statusLabel,
+              message: errDetailMsg,
+              duration: `${Date.now() - startTime}ms`
+            });
+            // Continuar con el siguiente modelo
+            continue;
+          }
+        }
+
+        // Si todos los modelos secuenciales fallaron
+        window.lastCascadeAttemptLogs = attemptLogs;
+        showDiagnosticReportModal(attemptLogs);
+        throw new Error(`La cascada secuencial con adjuntos falló (${attemptLogs.length} modelos evaluados). Revise el Informe de Diagnóstico en pantalla.`);
+      }
+
+      // =========================================================================
+      // ESTRATEGIA 2: SI LA CONSULTA ES SOLO TEXTO (O TEXTO EXTRAÍDO)
+      // Lanzamiento concurrente en paralelo ultrarrápido con Promise.allSettled
+      // =========================================================================
+      if (typeof onModelSwitch === 'function') {
+        try {
+          onModelSwitch('Consultando modelos Flash en paralelo simultáneo...');
+        } catch(e) {}
+      }
+
+      const requestPromises = modelsToQuery.map(async (rawModel) => {
+        const cleanModel = String(rawModel).replace(/^models\//, '').trim();
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(cleanModel)}:generateContent?key=${encodeURIComponent(key)}`;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+        const startTime = Date.now();
+
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+
+          if (!response.ok) {
+            let errText = '';
+            let errData = {};
+            try {
+              errText = await response.text();
+              errData = JSON.parse(errText);
+            } catch(e) {
+              errData = { raw: errText };
+            }
+            const errMsg = errData.error?.message || errText || response.statusText || `HTTP ${response.status}`;
+
+            if (response.status === 429 && (errMsg.includes('limit: 0') || errMsg.includes('limit:0') || errMsg.includes('quota'))) {
+              zeroQuotaModels.add(cleanModel);
+              availableCascadeModels = availableCascadeModels.filter(m => m !== cleanModel);
+            }
+
+            attemptLogs.push({
+              model: cleanModel,
+              status: `HTTP ${response.status}`,
+              message: errMsg,
+              duration: `${Date.now() - startTime}ms`
+            });
+
+            return {
+              success: false,
+              model: cleanModel,
+              error: errMsg,
+              status: `HTTP ${response.status}`
+            };
+          }
+
+          const result = await response.json();
+          const textCandidate = result.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('\n');
+          if (!textCandidate || !textCandidate.trim()) {
+            throw new Error("Respuesta vacía devuelta por el modelo");
+          }
+
+          attemptLogs.push({
+            model: cleanModel,
+            status: 'HTTP 200 (Éxito)',
+            message: 'Respuesta completada con éxito',
+            duration: `${Date.now() - startTime}ms`
+          });
+
+          return {
+            success: true,
+            model: cleanModel,
+            text: textCandidate,
+            duration: Date.now() - startTime
+          };
+
+        } catch (err) {
+          clearTimeout(timeoutId);
+          const isTimeout = err.name === 'AbortError';
+          const statusLabel = isTimeout ? 'Timeout (10 min)' : (err.message.startsWith('HTTP') ? err.message.split(':')[0] : 'Error Red / CORS');
+          const errDetailMsg = isTimeout ? 'El modelo excedió los 10 minutos de tiempo límite.' : err.message;
+
+          attemptLogs.push({
+            model: cleanModel,
+            status: statusLabel,
+            message: errDetailMsg,
+            duration: `${Date.now() - startTime}ms`
+          });
+
+          return {
+            success: false,
+            model: cleanModel,
+            error: errDetailMsg,
+            status: statusLabel
+          };
+        }
+      });
+
+      const settledResults = await Promise.allSettled(requestPromises);
+
+      // Filtrar aquellos que respondieron con éxito HTTP 200
+      const successfulResponses = [];
+      settledResults.forEach(r => {
+        if (r.status === 'fulfilled' && r.value && r.value.success && r.value.text) {
+          successfulResponses.push(r.value);
+        }
+      });
+
+      window.lastCascadeAttemptLogs = attemptLogs;
+
+      if (successfulResponses.length > 0) {
+        // Seleccionar automáticamente la respuesta del modelo de MAYOR JERARQUÍA
+        successfulResponses.sort((a, b) => {
+          const idxA = hierarchyOrder.indexOf(a.model);
+          const idxB = hierarchyOrder.indexOf(b.model);
+          return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+        });
+
+        const best = successfulResponses[0];
+        window.lastCascadeSuccessModel = best.model;
+
+        return {
+          text: best.text,
+          modelUsed: best.model,
+          badgeText: `⚡ Respondido por: ${best.model}`,
+          successfulCount: successfulResponses.length,
+          totalCount: modelsToQuery.length,
+          logs: attemptLogs
+        };
+      }
+
+      // Si todos los modelos fallaron: DESPLEGAR INFORME DE DIAGNÓSTICO DETALLADO
+      showDiagnosticReportModal(attemptLogs);
+      throw new Error(`Las consultas en paralelo se agotaron sin éxito (${attemptLogs.length} modelos evaluados). Revise el Informe de Diagnóstico en pantalla.`);
+    }
+
+    // Compatibilidad y alias
+    const callGeminiCascade = callGeminiParallel;
+    const executeGeminiCascade = callGeminiParallel;
+
+    // --- MODAL DE DIAGNÓSTICO EN CASO DE FALLO TOTAL ---
+    function showDiagnosticReportModal(logs = []) {
+      const modal = document.getElementById('diagnosticReportModal');
+      const tbody = document.getElementById('diagnosticTableBody');
+      if (!modal || !tbody) return;
+
+      if (!logs || logs.length === 0) {
+        logs = window.lastCascadeAttemptLogs || [];
+      }
+
+      if (logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400">No hay registros de fallos recientes.</td></tr>`;
+      } else {
+        tbody.innerHTML = logs.map((log, idx) => `
+          <tr class="border-b border-slate-800/80 hover:bg-slate-800/40 text-[11px]">
+            <td class="p-2.5 font-mono font-medium text-slate-200 whitespace-nowrap">
+              <span class="text-blue-400 font-bold mr-1">#${idx + 1}</span> ${log.model}
+            </td>
+            <td class="p-2.5 font-mono whitespace-nowrap">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${
+                String(log.status).includes('429') ? 'bg-red-950 text-red-400 border border-red-800' :
+                String(log.status).includes('Timeout') ? 'bg-amber-950 text-amber-300 border border-amber-800' :
+                'bg-slate-800 text-slate-300 border border-slate-700'
+              }">${log.status}</span>
+            </td>
+            <td class="p-2.5 text-slate-300 font-sans break-words max-w-xs sm:max-w-md">
+              <div class="line-clamp-2 hover:line-clamp-none transition-all cursor-pointer" title="${log.message}">
+                ${log.message}
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeDiagnosticReportModal() {
+      const modal = document.getElementById('diagnosticReportModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // --- SYSTEM PROMPT (28 PAPERS, 4E COGNITION, BILINGUAL GLOSSARY) ---
+    function buildSystemPrompt(scope) {
+      return `
+Actúa como Asesor Psicopedagógico de Élite y Consultor Senior en Psicología Educativa ("Asesor Psicopedagógico").
+Tu misión es diagnosticar el nivel de externalización cognitiva ("Cognitive Outsourcing"), ilusión de competencia ("Dunning-Kruger Effect") y diseñar estrategias de "Fricción Metacognitiva" para restaurar la "Soberanía Epistémica".
+
+DIRECTIVA DE PROFUNDIDAD EXHAUSTIVA Y DENSIDAD ACADÉMICA (ESTRICTO):
+Queda estrictamente PROHIBIDO emitir respuestas telegráficas, esquemáticas, resumidas o superficiales. Cada bloque del diagnóstico y cada respuesta del consultor deben ser tratados como un dictamen pericial psicopedagógico formal de postgrado universitario. Desarrolla ampliamente cada sección con varios párrafos continuos de argumentación clínica sólida, riqueza conceptual y fundamentación teórica de vanguardia.
+
+DIRECTRIZ PRIMORDIAL DE TONO Y ESTILO:
+Redacta con la fluidez, calidez reflexiva, riqueza conceptual y elegancia pedagógica propias de un académico y psicólogo humano. Evita listas telegráficas impersonales o tonos mecánicos de bot, manteniendo siempre la rigurosidad científica, las citas exactas de los autores y las notas explicativas en español de los términos técnicos.
+
+REGLA DE CONFIRMACIÓN DOCUMENTAL:
+Siempre que el usuario adjunte uno o varios archivos (imágenes, PDFs, Word, Excel, texto), es OBLIGATORIO que el primer párrafo de tu respuesta mencione explícitamente los nombres de los archivos analizados y cite textualmente al menos un dato, frase, variable o detalle visual extraído directamente de ellos para evidenciar de forma fehaciente su lectura y procesamiento.
+
+REGLA ESTRICTA DE SINTAXIS Y FORMATO:
+PROHIBIDO introducir saltos de línea manuales dentro de palabras o en medio de etiquetas de formato Markdown (ej. nunca separes una palabra dentro de **negritas**). Toda palabra y etiqueta Markdown debe ser continua e íntegra.
+
+CORPUS TEÓRICO OBLIGATORIO (Consensus Grounding - 28 Papers):
+- Fan et al. (2025): Deterioro metacognitivo por descarga temprana al LLM.
+- Zhang & Liu (2025): Efecto Dunning-Kruger por confusión de fluidez sintáctica de la IA con competencia propia.
+- Jia et al. (2026): "Sovereignty Trap" (Trampa de Soberanía) por delegación de la autoría reflexiva.
+- Si et al. (2026): Automatización erosiva en dinámicas de aprendizaje colaborativo.
+- Chan (2025): Ansiedad, culpa y síndrome del impostor digital en estudiantes ("AI Guilt").
+- Steyvers et al. (2025): Complementariedad humana-IA vs. sustitución cognitiva pasiva.
+- Chen & Alibakhshi (2025): Protocolo Draft-First no digital para reconectar la memoria de trabajo.
+- Shen et al. (2026): Rúbricas de procesos basadas en trazabilidad de prompts y pensamiento crítico.
+- Vendrell & Johnston (2026): Defensa oral socrática rápida (5 minutos) con variación de parámetros.
+- Noller (2025): Cognición 4E (Embodied, Embedded, Extended, Enacted) y fricción física obligatoria.
+- Högberg (2026): Neuroplasticidad y co-evolución: la dificultad deseable es indispensable para la sinaptogénesis.
+- Adorni (2025): Ciudadanía algorítmica y vigilancia epistémica frente a cajas negras.
+- Vygotsky & Bozhovich: La Situación Social del Desarrollo y preservación de la Zona de Desarrollo Próximo (ZPD).
+- Renzulli & Sternberg: Protección del talento y pensamiento divergente frente a la uniformización del LLM.
+
+REGLA OBLIGATORIA DE GLOSARIO BILINGÜE:
+Cada vez que utilices un concepto técnico en inglés (*Cognitive Outsourcing, Sovereignty Trap, Epistemic Debt, Metacognitive Friction, Dunning-Kruger, AI Guilt, Draft-First, etc.*), DEBES proporcionar inmediatamente entre paréntesis o en una frase concisa su definición explicativa en español, garantizando la fluidez, calidez, riqueza conceptual y elegancia pedagógica de un académico y psicólogo humano.
+
+ESTRUCTURA DE RESPUESTA REQUERIDA (Genera los 4 bloques ampliamente desarrollados y claramente delimitados):
+
+${scope === 'individual' ? `
+### BLOQUE 1: DIAGNÓSTICO CLÍNICO-EDUCATIVO
+- Clasifica el caso en uno de los 3 niveles:
+  * Nivel 1: Asistencial / Complementario (uso instrumental saludable, retiene soberanía).
+  * Nivel 2: Sustitutivo / Atrofiante (externalización del razonamiento nuclear, ilusión de competencia).
+  * Nivel 3: Dependencia Disruptiva (incapacidad de resolución analógica, parálisis o deshonestidad refleja).
+- Justificación clínica y fenomenológica pormenorizada del nivel asignado (mínimo 2-3 párrafos exhaustivos), analizando detenidamente la tensión dialéctica entre la capacidad biológica del estudiante y la mediación técnica del modelo de IA, integrando las observaciones y la evidencia de los archivos adjuntos.
+
+### BLOQUE 2: MECANISMO PSICOLÓGICO SUBYACENTE (CITAS APA)
+- Explicación profunda y detallada de los correlatos neurocognitivos y afectivos involucrados: el conflicto entre Sistema 1 (procesamiento rápido, heurístico y de mínimo esfuerzo) vs. Sistema 2 (deliberación analítica y control ejecutivo), la elusión perjudicial de la carga cognitiva germana necesaria para la consolidación sináptica, la descalibración del monitoreo metacognitivo y la ilusión de fluidez conceptual.
+- Cita expresamente en formato APA a los autores pertinentes del corpus de 28 papers (ej. Fan et al., 2025; Zhang & Liu, 2025; Jia et al., 2026; Steyvers et al., 2025; Högberg, 2026; Chan, 2025).
+
+### BLOQUE 3: ESTRATEGIAS DE FRICCIÓN METACOGNITIVA PARA EL AULA
+- Dos propuestas didácticas de fricción metacognitiva completamente diseñadas y listas para su implementación inmediata en el aula:
+  1. Protocolo Draft-First (Matriz de Borrador No Digital) con consignas textuales exactas listas para entregar al alumno, detallando cómo reconectar la memoria de trabajo mediante soportes analógicos.
+  2. Batería de Defensa Oral Socrática con 3 preguntas nucleares con variación de parámetros para evaluar la trazabilidad reflexiva y desarticular la externalización no declarada.
+- Incluye una tabla Markdown detallada con criterios de evaluación procesal, indicadores de logro y ponderación analítica.
+
+### BLOQUE 4: CONTENCIÓN AFECTIVA Y RESTAURACIÓN DE SOBERANÍA EPISTÉMICA
+- Plan de acompañamiento emocional y restauración de la agencia intelectual del estudiante para superar la Trampa de la Soberanía (*Sovereignty Trap*, Jia et al., 2026).
+- Pautas dialógicas específicas para el docente sin punitivismo ciego, mitigando la culpa y la ansiedad del impostor por IA (*AI Guilt*, Chan, 2025) y promoviendo la Ciudadanía Algorítmica informada y crítica (Adorni, 2025).
+` : `
+### BLOQUE 1: DIAGNÓSTICO DEL CLIMA Y DINÁMICA GRUPAL DE APRENDIZAJE
+- Clasifica el nivel de homogeneización y dependencia colectiva del grupo (Baja, Media o Crítica).
+- Justificación clínica y fenomenológica pormenorizada del nivel grupal asignado (mínimo 2-3 párrafos exhaustivos), analizando el impacto en la participación de aula, la atrofia de la deliberación dialéctica y el clima institucional frente a la mediación tecnológica.
+
+### BLOQUE 2: MECANISMOS DE DEPENDENCIA COLECTIVA (CONSENSUS GROUNDING)
+- Explicación profunda de la normalización social de la descarga cognitiva ("Erosive Automation", Si et al., 2026).
+- Análisis de la pérdida del pensamiento crítico colectivo, la uniformidad discursiva y la atrofia de la voz comunitaria del aula frente a la trampa de soberanía ("Sovereignty Trap", Jia et al., 2026; Steyvers et al., 2025). Citas directas en APA de los 28 papers.
+
+### BLOQUE 3: INTERVENCIÓN CURRICULAR Y DIDÁCTICA GRUPAL
+- Dos propuestas de intervención colaborativa completamente diseñadas para revitalizar el debate y la fricción metacognitiva en el aula:
+  1. Taller de Auditoría Grupal de Alucinaciones o Desafío de Ingeniería Inversa en equipos, con consignas textuales y roles definidos.
+  2. Torneo de Debate Socrático Analógico sin dispositivos (fundamentado en la Cognición 4E: Embodied, Embedded, Extended, Enacted; Noller, 2025).
+- Incluye una tabla Markdown con la estructura temporal, roles de los estudiantes, criterios procesales y rúbrica formativa.
+
+### BLOQUE 4: ESTRATEGIA DE CLIMA AFECTIVO Y SOBERANÍA COLECTIVA
+- Protocolo para desarmar la cultura de la sospecha punitiva y la desconfianza cruzada entre docentes y estudiantes.
+- Plan para co-construir un pacto ético de complementariedad humana-IA y restaurar la soberanía epistémica grupal.
+`}
+`;
+    }
+
+    // --- CLIENT-SIDE IMAGE COMPRESSION (CANVAS, MAX 1600PX, JPEG 0.82) ---
+    async function compressImageIfNeeded(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onerror = () => {
+          // Fallback en caso de error
+          resolve({
+            dataUrl: null,
+            base64: null,
+            size: (file.size / 1024).toFixed(1) + ' KB',
+            mimeType: file.type || 'image/jpeg'
+          });
+        };
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onerror = () => {
+            resolve({
+              dataUrl: e.target.result,
+              base64: e.target.result.split(',')[1] || '',
+              size: (file.size / 1024).toFixed(1) + ' KB',
+              mimeType: file.type || 'image/jpeg'
+            });
+          };
+          img.onload = () => {
+            const MAX_DIM = 1600;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > MAX_DIM || height > MAX_DIM) {
+              if (width > height) {
+                height = Math.round((height * MAX_DIM) / width);
+                width = MAX_DIM;
+              } else {
+                width = Math.round((width * MAX_DIM) / height);
+                height = MAX_DIM;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Calidad JPEG 0.82 para óptimo balance entre legibilidad y ligereza
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+            const b64 = compressedDataUrl.substring(compressedDataUrl.indexOf(',') + 1);
+            const approxBytes = Math.round((b64.length * 3) / 4);
+            const formattedSize = approxBytes > 1048576 
+              ? (approxBytes / 1048576).toFixed(1) + ' MB (optimizado)' 
+              : (approxBytes / 1024).toFixed(1) + ' KB (optimizado)';
+
+            resolve({
+              dataUrl: compressedDataUrl,
+              base64: b64,
+              size: formattedSize,
+              mimeType: 'image/jpeg'
+            });
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // --- MULTIFORMAT FILE HANDLERS (EXCEL, WORD, PDF, IMAGES, TEXT) ---
+    async function processUploadedFile(file) {
+      const ext = file.name.split('.').pop().toLowerCase();
+      const isImage = ['jpg', 'jpeg', 'png', 'webp'].includes(ext);
+      const isPdf = ext === 'pdf';
+      const isExcel = ['xlsx', 'xls', 'csv'].includes(ext);
+      const isDocx = ['docx', 'doc'].includes(ext);
+
+      const fileObj = {
+        name: file.name,
+        size: (file.size / 1024).toFixed(1) + ' KB',
+        type: file.type || (isPdf ? 'application/pdf' : 'application/octet-stream'),
+        isMedia: isImage || isPdf,
+        data: null,
+        base64: null,
+        textContent: null
+      };
+
+      if (isImage) {
+        // Compresión automática en el cliente (canvas 1600px max, jpeg 0.82)
+        const compressed = await compressImageIfNeeded(file);
+        fileObj.isMedia = true;
+        fileObj.data = compressed.dataUrl;
+        fileObj.base64 = compressed.base64;
+        fileObj.size = compressed.size;
+        fileObj.type = compressed.mimeType;
+      } else if (isPdf) {
+        // Lectura directa de PDF y remoción rigurosa de cabecera Data-URL
+        fileObj.isMedia = true;
+        const fullDataUrl = await new Promise((res, rej) => {
+          const reader = new FileReader();
+          reader.onload = () => res(reader.result);
+          reader.onerror = rej;
+          reader.readAsDataURL(file);
+        });
+        fileObj.data = fullDataUrl;
+        fileObj.base64 = fullDataUrl.includes(',') ? fullDataUrl.split(',')[1] : fullDataUrl;
+        fileObj.type = 'application/pdf';
+      } else if (isExcel) {
+        // Extracción client-side de texto para documentos Excel/CSV (cero peso en red)
+        fileObj.isMedia = false;
+        try {
+          if (window.XLSX) {
+            const ab = await file.arrayBuffer();
+            const wb = XLSX.read(ab, { type: 'array' });
+            let fullText = '';
+            wb.SheetNames.forEach(sheetName => {
+              const sheet = wb.Sheets[sheetName];
+              fullText += `\n--- HOJA EXCEL: ${sheetName} ---\n` + XLSX.utils.sheet_to_csv(sheet);
+            });
+            fileObj.textContent = fullText;
+          } else {
+            fileObj.textContent = await file.text();
+          }
+        } catch(e) {
+          fileObj.textContent = await file.text();
+        }
+      } else if (isDocx) {
+        // Extracción client-side de texto para Word docx/doc (cero peso en red)
+        fileObj.isMedia = false;
+        try {
+          if (window.mammoth) {
+            const ab = await file.arrayBuffer();
+            const res = await mammoth.extractRawText({ arrayBuffer: ab });
+            fileObj.textContent = res.value;
+          } else {
+            fileObj.textContent = await file.text();
+          }
+        } catch(e) {
+          fileObj.textContent = await file.text();
+        }
+      } else {
+        // Archivos de texto plano (.txt, código, etc. con cero peso en red)
+        fileObj.isMedia = false;
+        fileObj.textContent = await file.text();
+      }
+
+      return fileObj;
+    }
+
+    // --- MULTIFORMAT FILE ATTACHMENTS (EVALUADOR & CHAT) ---
+    let evalFileAttachments = [];
+    let chatFileAttachments = [];
+
+    async function handleEvalFile(e) {
+      const files = Array.from(e.target.files || []);
+      if (files.length === 0) return;
+      const progressBar = document.getElementById('evalFileProgressBar');
+      if (progressBar) progressBar.classList.remove('hidden');
+
+      let countAdded = 0;
+      for (const file of files) {
+        try {
+          const processed = await processUploadedFile(file);
+          evalFileAttachments.push(processed);
+          countAdded++;
+        } catch (err) {
+          console.warn("Error al procesar archivo en evaluador:", err);
+        }
+      }
+
+      if (progressBar) progressBar.classList.add('hidden');
+      evalFileAttachment = evalFileAttachments[0] || null;
+      renderEvalFilesPreview();
+      if (countAdded > 0) {
+        showToastNotification(`📎 ${countAdded} archivo(s) optimizado(s) y adjuntado(s)`);
+      }
+      e.target.value = '';
+    }
+
+    function renderEvalFilesPreview() {
+      const container = document.getElementById('evalFilesPreview');
+      if (!container) return;
+      if (evalFileAttachments.length === 0) {
+        container.classList.add('hidden');
+        container.innerHTML = '';
+        return;
+      }
+      container.classList.remove('hidden');
+      container.innerHTML = evalFileAttachments.map((f, idx) => `
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-xs shadow-md">
+          <i class="${f.isMedia ? 'fa-solid fa-image text-emerald-400' : 'fa-solid fa-file-lines text-blue-400'}"></i>
+          <span class="max-w-[140px] truncate font-medium" title="${f.name}">${f.name}</span>
+          <span class="text-[10px] text-emerald-400 font-mono">(${f.size})</span>
+          <button type="button" onclick="removeEvalFile(${idx})" class="text-slate-400 hover:text-red-400 ml-1 p-0.5 rounded hover:bg-slate-800 transition" title="Cancelar / Eliminar">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function removeEvalFile(idx) {
+      if (typeof idx === 'number') {
+        evalFileAttachments.splice(idx, 1);
+      } else {
+        evalFileAttachments = [];
+      }
+      evalFileAttachment = evalFileAttachments[0] || null;
+      renderEvalFilesPreview();
+    }
+
+    async function handleChatFile(e) {
+      const files = Array.from(e.target.files || []);
+      if (files.length === 0) return;
+      const progressBar = document.getElementById('chatFileProgressBar');
+      if (progressBar) progressBar.classList.remove('hidden');
+
+      let countAdded = 0;
+      for (const file of files) {
+        try {
+          const processed = await processUploadedFile(file);
+          chatFileAttachments.push(processed);
+          countAdded++;
+        } catch (err) {
+          console.warn("Error al procesar archivo en chat:", err);
+        }
+      }
+
+      if (progressBar) progressBar.classList.add('hidden');
+      chatFileAttachment = chatFileAttachments[0] || null;
+      renderChatFilesPreview();
+      if (countAdded > 0) {
+        showToastNotification(`📎 ${countAdded} archivo(s) optimizado(s) y adjuntado(s)`);
+      }
+      e.target.value = '';
+    }
+
+    function renderChatFilesPreview() {
+      const container = document.getElementById('chatFilesPreview');
+      if (!container) return;
+      if (chatFileAttachments.length === 0) {
+        container.classList.add('hidden');
+        container.innerHTML = '';
+        return;
+      }
+      container.classList.remove('hidden');
+      container.innerHTML = chatFileAttachments.map((f, idx) => `
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 text-xs shadow-md">
+          <i class="${f.isMedia ? 'fa-solid fa-image text-emerald-400' : 'fa-solid fa-file-lines text-blue-400'}"></i>
+          <span class="max-w-[130px] truncate font-medium" title="${f.name}">${f.name}</span>
+          <span class="text-[10px] text-emerald-400 font-mono">(${f.size})</span>
+          <button type="button" onclick="removeChatFile(${idx})" class="text-slate-400 hover:text-red-400 ml-1 p-0.5 rounded hover:bg-slate-700 transition" title="Cancelar / Eliminar">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function removeChatFile(idx) {
+      if (typeof idx === 'number') {
+        chatFileAttachments.splice(idx, 1);
+      } else {
+        chatFileAttachments = [];
+      }
+      chatFileAttachment = chatFileAttachments[0] || null;
+      renderChatFilesPreview();
+    }
+
+    function autoResizeTextarea(el) {
+      if (!el) return;
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 150) + 'px';
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function toggleChatSidebar() {
+      const sidebar = document.getElementById('chatSidebar');
+      if (!sidebar) return;
+      sidebar.classList.toggle('hidden');
+    }
+
+    // --- TRIAJE EXECUTION (EVALUADOR CLÍNICO) ---
+    async function ejecutarTriaje() {
+      if (!apiKey) {
+        openApiKeyModal();
+        return;
+      }
+
+      const area = document.getElementById('evalArea').value;
+      const contexto = document.getElementById('evalContexto').value;
+      const descripcion = document.getElementById('evalDescripcion').value.trim();
+
+      // Collect checked warning signs
+      const list = currentScope === 'individual' ? CHECKLIST_INDIVIDUAL : CHECKLIST_GROUP;
+      const markedSigns = [];
+      list.forEach(item => {
+        const cb = document.getElementById(item.id);
+        if (cb && cb.checked) {
+          markedSigns.push(item.label.replace(/<[^>]*>?/gm, ''));
+        }
+      });
+
+      if (markedSigns.length === 0 && !descripcion && !evalFileAttachment) {
+        alert("Por favor, marque al menos una señal de alerta, ingrese una descripción del caso o adjunte un archivo.");
+        return;
+      }
+
+      // UI Loading state
+      document.getElementById('evalEmptyState').classList.add('hidden');
+      document.getElementById('evalResultContainer').classList.add('hidden');
+      const errBox = document.getElementById('evalErrorState');
+      if (errBox) errBox.classList.add('hidden');
+      document.getElementById('evalLoading').classList.remove('hidden');
+      document.getElementById('btnEjecutarTriaje').disabled = true;
+      document.getElementById('btnEjecutarText').textContent = 'Analizando en Paralelo...';
+
+      const promptUser = `
+SOLICITUD DE TRIAJE PSICOPEDAGÓGICO:
+- Alcance del Caso: ${currentScope === 'individual' ? 'Estudiante Individual' : 'Grupo / Aula Completa'}
+- Área Académica: ${area}
+- Contexto Material: ${contexto}
+- Señales de Alerta Observadas:
+${markedSigns.map(s => '  * ' + s).join('\n') || '  (Ninguna señal específica marcada por casillas)'}
+
+- Descripción Adicional del Caso:
+${descripcion || '(Sin descripción textual adicional; consulte el archivo adjunto si existe)'}
+
+Por favor, elabore el dictamen en los 4 BLOQUES estructurados solicitados en las instrucciones del sistema, con el glosario bilingüe, las citas de Consensus y las consignas de fricción metacognitiva listas para el aula.
+      `;
+
+      try {
+        const result = await executeGeminiCascade({
+          prompt: promptUser,
+          systemInstruction: buildSystemPrompt(currentScope),
+          attachments: evalFileAttachments,
+          onModelSwitch: (statusMsg) => {
+            const sub = document.getElementById('evalLoadingSubtext');
+            if (sub) sub.textContent = statusMsg || 'Consultando modelos Flash en paralelo (10 min max)...';
+          }
+        });
+
+        // Parse result into 4 blocks
+        const fullText = result.text;
+        window.activeDiagnosticContext = fullText;
+
+        // Sincronización Automática e Inmediata con la Memoria Colectiva Unificada
+        window.sharedAppMemory = {
+          hasActiveCase: true,
+          caseScope: currentScope === 'individual' ? 'Individual' : 'Grupo / Aula Completa',
+          area: area || 'General',
+          context: contexto || 'Estándar',
+          indicators: markedSigns || [],
+          caseDescription: descripcion || '',
+          attachedFiles: evalFileAttachments ? evalFileAttachments.map(f => ({ name: f.name, size: f.size, type: f.type })) : [],
+          fullDiagnosticText: fullText,
+          timestamp: new Date().toISOString()
+        };
+
+        lastEvaluationData = {
+          scope: currentScope,
+          area: area,
+          contexto: contexto,
+          signs: markedSigns,
+          description: descripcion,
+          fullResponse: fullText,
+          modelUsed: result.modelUsed,
+          badgeText: result.badgeText,
+          timestamp: new Date().toISOString()
+        };
+
+        // Separate blocks by headers or display cleanly
+        renderDiagnosisBlocks(fullText);
+        document.getElementById('evalModelBadge').textContent = result.badgeText || `⚡ Respondido por: ${result.modelUsed}`;
+        document.getElementById('evalResultContainer').classList.remove('hidden');
+
+      } catch (err) {
+        if (errBox) {
+          errBox.classList.remove('hidden');
+          const msgEl = document.getElementById('evalErrorMessage');
+          if (msgEl) msgEl.textContent = err.message || 'Error en la consulta en paralelo. Revise el informe de diagnóstico.';
+        } else {
+          document.getElementById('evalEmptyState').classList.remove('hidden');
+        }
+        showDiagnosticReportModal(window.lastCascadeAttemptLogs);
+      } finally {
+        document.getElementById('evalLoading').classList.add('hidden');
+        document.getElementById('btnEjecutarTriaje').disabled = false;
+        document.getElementById('btnEjecutarText').textContent = 'Generar Diagnóstico e Intervención';
+      }
+    }
+
+    function renderDiagnosisBlocks(fullText) {
+      // Split text into the 4 blocks if found, else distribute
+      const b1 = extractBlock(fullText, 'BLOQUE 1', 'BLOQUE 2') || 'Diagnóstico no delimitado expresamente.';
+      const b2 = extractBlock(fullText, 'BLOQUE 2', 'BLOQUE 3') || 'Mecanismos no delimitados expresamente.';
+      const b3 = extractBlock(fullText, 'BLOQUE 3', 'BLOQUE 4') || 'Estrategias no delimitadas expresamente.';
+      const b4 = extractBlock(fullText, 'BLOQUE 4', null) || 'Contención no delimitada expresamente.';
+
+      document.getElementById('resBloque1').innerHTML = renderSafeMarkdown(b1);
+      document.getElementById('resBloque2').innerHTML = renderSafeMarkdown(b2);
+      document.getElementById('resBloque3').innerHTML = renderSafeMarkdown(b3);
+      document.getElementById('resBloque4').innerHTML = renderSafeMarkdown(b4);
+    }
+
+    function extractBlock(text, startKeyword, endKeyword) {
+      const idxStart = text.indexOf(startKeyword);
+      if (idxStart === -1) return null;
+      
+      const sub = text.substring(idxStart);
+      if (!endKeyword) return sub;
+
+      const idxEnd = sub.indexOf(endKeyword);
+      if (idxEnd === -1) return sub;
+
+      return sub.substring(0, idxEnd).trim();
+    }
+
+    // --- UNIVERSAL CLIPBOARD UTILITY ---
+    window.copyTextToClipboard = function(text, triggerBtn = null) {
+      if (!text) return;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text)
+          .then(() => feedbackCopia(triggerBtn))
+          .catch(() => fallbackCopia(text, triggerBtn));
+      } else {
+        fallbackCopia(text, triggerBtn);
+      }
+    };
+
+    function fallbackCopia(texto, btn) {
+      const ta = document.createElement("textarea");
+      ta.value = texto;
+      ta.style.position = "fixed";
+      ta.style.left = "0";
+      ta.style.top = "0";
+      ta.style.opacity = "0.01";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, 999999);
+      try {
+        if (document.execCommand("copy")) {
+          feedbackCopia(btn);
+        } else {
+          abrirModalCopiaManual(texto);
+        }
+      } catch (e) {
+        abrirModalCopiaManual(texto);
+      }
+      document.body.removeChild(ta);
+    }
+
+    function feedbackCopia(btn) {
+      if (btn) {
+        const original = btn.innerHTML;
+        btn.innerHTML = "<span>✓ Copiado</span>";
+        setTimeout(() => btn.innerHTML = original, 2000);
+      }
+      const toast = document.getElementById("toast-notification");
+      if (toast) {
+        toast.innerText = "¡Texto copiado exitosamente!";
+        toast.classList.remove("hidden");
+        setTimeout(() => toast.classList.add("hidden"), 2500);
+      }
+    }
+
+    function abrirModalCopiaManual(texto) {
+      const modal = document.createElement("div");
+      modal.className = "fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4";
+      modal.innerHTML = `
+        <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 max-w-sm w-full text-slate-200">
+          <h4 class="font-bold text-sm text-blue-400 mb-2">Seleccione y copie el texto:</h4>
+          <textarea class="w-full h-32 bg-slate-950 border border-slate-800 rounded p-2 text-xs text-slate-300 select-all" readonly>${texto}</textarea>
+          <button onclick="this.closest('.fixed').remove()" class="mt-3 w-full py-2 bg-blue-600 hover:bg-blue-500 rounded text-xs font-semibold text-white">Cerrar</button>
+        </div>`;
+      document.body.appendChild(modal);
+      modal.querySelector("textarea").select();
+    }
+
+    // Alias de retrocompatibilidad
+    const mostrarFeedbackCopiado = feedbackCopia;
+    const ejecutarFallbackCopia = fallbackCopia;
+    const mostrarModalCopiaManual = abrirModalCopiaManual;
+
+    function copiarDictamen(triggerButton = null) {
+      const contentEl = document.getElementById("diagnostic-result-content") || document.querySelector(".diagnostico-salida") || document.getElementById("diagnostico-resultado");
+      const text = contentEl ? contentEl.innerText : (lastEvaluationData ? lastEvaluationData.fullResponse : "");
+      if (!text) {
+        const toast = document.getElementById("toast-notification");
+        if (toast) {
+          toast.innerText = "No hay informe generado para copiar.";
+          toast.classList.remove("hidden");
+          setTimeout(() => toast.classList.add("hidden"), 2500);
+        }
+        return;
+      }
+      window.copyTextToClipboard(text, triggerButton);
+    }
+
+    function copyDiagnosticReport(triggerButton = null) {
+      const logs = window.lastCascadeAttemptLogs || [];
+      if (!logs.length) {
+        const toast = document.getElementById("toast-notification");
+        if (toast) {
+          toast.innerText = "No hay registros de diagnóstico para copiar.";
+          toast.classList.remove("hidden");
+          setTimeout(() => toast.classList.add("hidden"), 2500);
+        }
+        return;
+      }
+      const reportLines = [
+        "==================================================",
+        "INFORME DE DIAGNÓSTICO DE CONECTIVIDAD Y CUOTA",
+        "Aplicación: Asesor Psicopedagógico",
+        `Fecha: ${new Date().toLocaleString()}`,
+        `API Key: ${apiKey ? (apiKey.substring(0, 6) + '...' + apiKey.slice(-4)) : 'NO CONFIGURADA'}`,
+        "==================================================",
+        ...logs.map((l, i) => `[Intento #${i + 1}] Modelo: ${l.model}\nEstado: ${l.status} (${l.duration || 'N/A'})\nMensaje: ${l.message}\n`)
+      ];
+      const btn = triggerButton || document.getElementById('btnCopyDiagnostic');
+      window.copyTextToClipboard(reportLines.join('\n'), btn);
+    }
+
+    function copyChatMessage(idx, triggerButton = null) {
+      const session = chatSessions.find(s => s.id === currentSessionId) || chatSessions[0];
+      if (!session || !session.messages[idx]) return;
+      window.copyTextToClipboard(session.messages[idx].text, triggerButton);
+    }
+
+    window.showToast = function(msg) {
+      if (typeof showToastNotification === 'function') {
+        showToastNotification(msg);
+      } else {
+        const t = document.getElementById("toast-notification");
+        if (t) {
+          t.innerText = msg;
+          t.classList.remove("hidden");
+          setTimeout(() => t.classList.add("hidden"), 2500);
+        }
+      }
+    };
+
+    // --- ARQUITECTURA DE CONTEXTO TRANSPARENTE (EVALUADOR ➔ CONSULTOR) ---
+    function generateMemorySyncCardHtml() {
+      const scope = window.sharedAppMemory.caseScope || (currentScope === 'individual' ? 'Individual' : 'Grupo / Aula Completa');
+      const area = window.sharedAppMemory.area || 'General';
+      const filesText = (window.sharedAppMemory.attachedFiles && window.sharedAppMemory.attachedFiles.length > 0)
+        ? window.sharedAppMemory.attachedFiles.map(f => f.name).join(', ')
+        : 'Sin archivos adjuntos';
+
+      return `
+        <div id="memory-sync-card" class="mb-4 p-4 rounded-2xl bg-gradient-to-r from-blue-950/80 to-indigo-950/80 border border-blue-500/40 shadow-xl text-slate-200 animate-fade-in">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-blue-800/40">
+            <div class="flex items-center gap-2">
+              <span class="relative flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+              <h4 class="font-bold text-sm text-blue-300 tracking-wide uppercase">Memoria Colectiva Sincronizada</h4>
+            </div>
+            <button type="button" onclick="window.desvincularMemoriaColectiva()" class="text-xs text-slate-400 hover:text-red-400 transition-colors flex items-center gap-1" title="Iniciar consulta independiente">
+              <span>✕ Desvincular Caso</span>
+            </button>
+          </div>
+          <div class="text-xs text-slate-300 space-y-1.5">
+            <p><strong>Expediente Activo:</strong> <span class="text-emerald-400 font-medium">${scope}</span> | Área: ${area}</p>
+            <p><strong>Evidencia Documental:</strong> ${filesText}</p>
+            <p class="text-slate-400 italic text-[11px]">El Asesor tiene conocimiento total del dictamen anterior y sus variables. Puede solicitar rúbricas, adaptaciones o formular consultas independientes.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    window.transferirCasoAConsultor = function() {
+      try {
+        const diagEl = document.getElementById("diagnostic-result-content") || document.querySelector(".diagnostico-salida") || document.getElementById("diagnostico-resultado");
+        const fullDiagnosticText = window.sharedAppMemory.fullDiagnosticText || window.activeDiagnosticContext || (lastEvaluationData ? lastEvaluationData.fullResponse : "") || (diagEl ? diagEl.innerText : "");
+        
+        // Asegurar que window.sharedAppMemory esté debidamente poblado si no lo estaba
+        if (!window.sharedAppMemory.hasActiveCase && fullDiagnosticText) {
+          window.sharedAppMemory = {
+            hasActiveCase: true,
+            caseScope: currentScope === 'individual' ? 'Individual' : 'Grupo / Aula Completa',
+            area: (lastEvaluationData ? lastEvaluationData.area : 'General'),
+            context: (lastEvaluationData ? lastEvaluationData.contexto : 'Estándar'),
+            indicators: (lastEvaluationData ? lastEvaluationData.signs : []),
+            caseDescription: (lastEvaluationData ? lastEvaluationData.description : ''),
+            attachedFiles: evalFileAttachments ? evalFileAttachments.map(f => ({ name: f.name, size: f.size, type: f.type })) : [],
+            fullDiagnosticText: fullDiagnosticText,
+            timestamp: new Date().toISOString()
+          };
+        }
+        window.activeDiagnosticContext = fullDiagnosticText;
+        
+        // 1. Conmutar inmediatamente a la pestaña "Consultor en Vivo"
+        if (typeof switchTab === "function") {
+          switchTab("chat");
+        } else {
+          const btnTab = document.querySelector('[data-tab="consultor"]') || document.getElementById("tab-btn-consultor") || document.getElementById("tab-chat");
+          if (btnTab) btnTab.click();
+        }
+
+        // 2. NO volcar el texto dentro del textarea. La caja de texto del docente debe quedar 100% LIMPIA
+        const chatInput = document.getElementById("chat-input-textarea") || document.getElementById("chatInput");
+        if (chatInput) {
+          chatInput.value = "";
+          chatInput.placeholder = "El Asesor ya conoce el expediente completo. Formule su consulta, solicite rúbricas o aborde otro tema...";
+          autoResizeTextarea(chatInput);
+          chatInput.focus();
+        }
+
+        // 3. Renderizar el flujo de mensajes con la tarjeta visual de señalética al inicio
+        renderCurrentChatMessages();
+        showToast('Memoria colectiva vinculada al Consultor');
+      } catch (e) {
+        console.error("Error al transferir contexto:", e);
+      }
+    };
+
+    // Mantener alias de compatibilidad global
+    window.continuarEnConsultorEnVivo = window.transferirCasoAConsultor;
+    window.sendMessage = window.sendChatMessage = sendChatMessage;
+
+    // --- CHAT MULTI-SESSION MANAGEMENT ---
+    function initChatSessions() {
+      if (chatSessions.length === 0) {
+        const defaultSession = {
+          id: 'sess_default',
+          title: 'Consulta Docente Abierta',
+          createdAt: 'Hoy',
+          messages: [
+            {
+              role: 'assistant',
+              text: `👋 **¡Bienvenido al Asesor Psicopedagógico en Vivo!**\n\nSoy su asesor especializado en mitigación de *Cognitive Outsourcing* (externalización pasiva a la IA) y restauración de la soberanía epistémica del estudiante y del aula.\n\nPuede:\n1. Realizar una consulta abierta sobre cualquier situación de aula o diseño curricular.\n2. Adjuntar consignas, exámenes o rúbricas mediante el botón de clip (**+**).\n3. Hacer clic en las **Sugerencias Rápidas** superiores para generar pautas probadas según el corpus de los 28 papers de Consensus.`,
+              modelUsed: 'Asesor Psicopedagógico'
+            }
+          ]
+        };
+        chatSessions.push(defaultSession);
+      }
+      if (!currentSessionId) currentSessionId = chatSessions[0].id;
+      renderChatSessionsList();
+      renderCurrentChatMessages();
+    }
+
+    function saveChatSessions() {
+      localStorage.setItem('edu_ai_chat_sessions', JSON.stringify(chatSessions));
+      localStorage.setItem('edu_ai_current_session_id', currentSessionId);
+    }
+
+    function createNewChatSession() {
+      const newSess = {
+        id: 'sess_' + Date.now(),
+        title: 'Nueva Consulta Docente',
+        createdAt: 'Ahora',
+        messages: [
+          {
+            role: 'assistant',
+            text: `👋 **Nueva Consulta Abierta.** ¿Qué reto de evaluación, dependencia de IA o diseño de consigna desea analizar hoy?`,
+            modelUsed: 'Asesor Psicopedagógico'
+          }
+        ]
+      };
+      chatSessions.unshift(newSess);
+      currentSessionId = newSess.id;
+      saveChatSessions();
+      renderChatSessionsList();
+      renderCurrentChatMessages();
+    }
+
+    function selectChatSession(id) {
+      currentSessionId = id;
+      saveChatSessions();
+      renderChatSessionsList();
+      renderCurrentChatMessages();
+    }
+
+    function deleteChatSession(id, e) {
+      if (e) e.stopPropagation();
+      if (!confirm("¿Desea eliminar esta sesión de chat?")) return;
+      chatSessions = chatSessions.filter(s => s.id !== id);
+      if (chatSessions.length === 0) {
+        initChatSessions();
+      } else {
+        if (currentSessionId === id) currentSessionId = chatSessions[0].id;
+        saveChatSessions();
+        renderChatSessionsList();
+        renderCurrentChatMessages();
+      }
+    }
+
+    function clearAllChatSessions() {
+      if (!confirm("¿Borrar todas las sesiones del historial?")) return;
+      chatSessions = [];
+      initChatSessions();
+    }
+
+    function toggleChatSidebar() {
+      const sidebar = document.getElementById('chatSidebar');
+      sidebar.classList.toggle('hidden');
+    }
+
+    function renderChatSessionsList() {
+      const container = document.getElementById('chatSessionsList');
+      if (!container) return;
+      container.innerHTML = chatSessions.map(s => {
+        const isActive = s.id === currentSessionId;
+        return `
+          <div onclick="selectChatSession('${s.id}')" class="group flex items-center justify-between p-2 rounded-lg cursor-pointer transition text-xs ${isActive ? 'bg-blue-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800'}">
+            <div class="flex items-center space-x-2 truncate">
+              <i class="fa-regular fa-message text-[11px] ${isActive ? 'text-white' : 'text-slate-500'}"></i>
+              <span class="truncate max-w-[140px]">${s.title}</span>
+            </div>
+            <button onclick="deleteChatSession('${s.id}', event)" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-400 p-1 transition" title="Eliminar">
+              <i class="fa-solid fa-trash-can text-[10px]"></i>
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCurrentChatMessages() {
+      const session = chatSessions.find(s => s.id === currentSessionId) || chatSessions[0];
+      if (!session) return;
+      const titleEl = document.getElementById('currentChatTitle');
+      if (titleEl) titleEl.textContent = session.title;
+      const container = document.getElementById('chatMessagesContainer');
+      if (!container) return;
+
+      let memoryCardHtml = '';
+      if (window.sharedAppMemory && window.sharedAppMemory.hasActiveCase) {
+        memoryCardHtml = generateMemorySyncCardHtml();
+      }
+
+      const messagesHtml = session.messages.map((msg, idx) => {
+        if (msg.role === 'system_card' || msg.isSystemCard) {
+          return `<div class="system-context-card my-1">${msg.html}</div>`;
+        }
+
+        const isUser = msg.role === 'user';
+        const isError = msg.modelUsed === 'Error' || (msg.text && msg.text.startsWith('⚠️'));
+
+        return `
+          <div class="flex ${isUser ? 'justify-end' : 'justify-start'} group">
+            <div class="max-w-[92%] sm:max-w-[85%] rounded-2xl p-3.5 sm:p-4 text-xs sm:text-sm shadow-md transition-all ${
+              isUser 
+                ? 'bg-blue-600 text-white rounded-br-sm' 
+                : isError 
+                  ? 'bg-red-950/40 border border-red-800 text-red-200 rounded-bl-sm'
+                  : 'bg-slate-900 border border-slate-800 text-slate-200 rounded-bl-sm'
+            }">
+              ${isUser ? `
+                <div class="flex items-center justify-between gap-2 text-[10px] text-blue-200 mb-1.5 pb-1 border-b border-blue-500/40">
+                  <span class="font-semibold flex items-center gap-1">
+                    <i class="fa-solid fa-user text-[10px]"></i> Docente
+                  </span>
+                  <div class="flex items-center gap-1.5 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button type="button" onclick="copyChatMessage(${idx}, this)" class="hover:text-white px-1.5 py-0.5 rounded bg-blue-700/60 hover:bg-blue-700 transition flex items-center gap-1" title="Copiar mensaje">
+                      <i class="fa-regular fa-copy text-[9px]"></i> <span>Copiar</span>
+                    </button>
+                    <button type="button" onclick="deleteChatMessage(${idx})" class="hover:text-red-300 px-1.5 py-0.5 rounded bg-blue-700/60 hover:bg-red-900/60 transition flex items-center gap-1" title="Eliminar mensaje">
+                      <i class="fa-solid fa-trash-can text-[9px]"></i> <span>Eliminar</span>
+                    </button>
+                  </div>
+                </div>
+              ` : `
+                <div class="flex flex-wrap items-center justify-between gap-1.5 text-[10px] text-blue-400 font-mono mb-2 pb-1 border-b border-slate-800">
+                  <div class="flex items-center gap-1 truncate max-w-[240px] sm:max-w-md">
+                    <i class="fa-solid fa-bolt text-amber-400"></i>
+                    <span class="truncate">${msg.badgeText || ('⚡ Respondido por: ' + (msg.modelUsed || 'gemini-3.5-flash-lite'))}</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="copyChatMessage(${idx}, this)" class="text-slate-400 hover:text-slate-200 px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700/60 transition flex items-center gap-1" title="Copiar respuesta">
+                      <i class="fa-regular fa-copy text-[10px]"></i> <span>Copiar</span>
+                    </button>
+                    <button type="button" onclick="retryChatMessage(${idx})" class="text-slate-400 hover:text-blue-300 px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700/60 transition flex items-center gap-1" title="Reintentar respuesta en paralelo">
+                      <i class="fa-solid fa-rotate-right text-[10px]"></i> <span>Reintentar</span>
+                    </button>
+                    <button type="button" onclick="deleteChatMessage(${idx})" class="text-slate-400 hover:text-red-400 px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700/60 transition flex items-center gap-1" title="Eliminar respuesta">
+                      <i class="fa-solid fa-trash-can text-[10px]"></i> <span>Eliminar</span>
+                    </button>
+                  </div>
+                </div>
+              `}
+              
+              <div class="prose prose-invert max-w-none prose-markdown ${isUser ? 'text-white font-medium' : ''}">
+                ${renderSafeMarkdown(msg.text)}
+              </div>
+
+              ${isError ? `
+                <div class="mt-3 pt-2 border-t border-red-900/60 flex items-center justify-end">
+                  <button type="button" onclick="retryChatMessage(${idx})" class="px-3 py-1.5 rounded-lg bg-red-800/80 hover:bg-red-700 text-white font-semibold text-xs transition shadow flex items-center gap-1.5 active:scale-95">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>🔄 Reintentar Consulta</span>
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = memoryCardHtml + messagesHtml;
+      scrollChatToBottom();
+    }
+
+    function scrollChatToBottom() {
+      const container = document.getElementById('chatMessagesContainer');
+      if (container) container.scrollTop = container.scrollHeight;
+    }
+
+    function copyChatMessage(idx, btn) {
+      const session = chatSessions.find(s => s.id === currentSessionId) || chatSessions[0];
+      if (!session || !session.messages[idx]) return;
+      window.copyTextToClipboard(session.messages[idx].text, btn);
+    }
+
+    function deleteChatMessage(idx) {
+      const session = chatSessions.find(s => s.id === currentSessionId) || chatSessions[0];
+      if (!session || !session.messages[idx]) return;
+      session.messages.splice(idx, 1);
+      saveChatSessions();
+      renderCurrentChatMessages();
+    }
+
+    async function retryChatMessage(idx) {
+      const session = chatSessions.find(s => s.id === currentSessionId) || chatSessions[0];
+      if (!session) return;
+      
+      // Buscar el prompt del usuario previo
+      let userPrompt = '';
+      for (let i = idx; i >= 0; i--) {
+        if (session.messages[i].role === 'user') {
+          userPrompt = session.messages[i].text;
+          break;
+        }
+      }
+      if (!userPrompt && session.messages.length > 0) {
+        userPrompt = session.messages[0].text;
+      }
+      if (!userPrompt) return;
+
+      // Si el mensaje en idx es del asistente o error, lo removemos para regenerar
+      if (session.messages[idx] && session.messages[idx].role === 'assistant') {
+        session.messages.splice(idx, 1);
+      }
+
+      const loadingMsg = {
+        role: 'assistant',
+        text: 'Reintentando consulta en paralelo con los modelos Flash más capaces...',
+        modelUsed: 'Paralelo Flash'
+      };
+      session.messages.push(loadingMsg);
+      renderCurrentChatMessages();
+
+      const systemInstr = buildSystemPrompt(session.attachedContext ? session.attachedContext.scope : 'individual') + 
+        `\nEstás en una conversación de consultoría en vivo con el docente. Responde con calidez profesional, rigor conceptual de los 28 papers de Consensus, tablas si se solicitan rúbricas, y traduce cualquier concepto anglosajón al español con su nota aclaratoria obligatoria.\nREGLA DE CONFIRMACIÓN DOCUMENTAL: Siempre que el usuario adjunte uno o varios archivos (imágenes, PDFs, Word, Excel, texto), es OBLIGATORIO que el primer párrafo de tu respuesta mencione explícitamente los nombres de los archivos analizados y cite textualmente al menos un dato, frase, variable o detalle visual extraído directamente de ellos para evidenciar de forma fehaciente su lectura y procesamiento.`;
+
+      let contextPrefix = "";
+      if (window.sharedAppMemory && window.sharedAppMemory.hasActiveCase && window.sharedAppMemory.fullDiagnosticText) {
+        contextPrefix = `[CONTEXTO DE DIAGNÓSTICO EN MEMORIA COLECTIVA UNIFICADA]:
+- Alcance del Caso: ${window.sharedAppMemory.caseScope || 'Estudiante'}
+- Área Académica: ${window.sharedAppMemory.area || 'General'}
+- Contexto Institucional: ${window.sharedAppMemory.context || 'Estándar'}
+- Indicadores Observados: ${window.sharedAppMemory.indicators && window.sharedAppMemory.indicators.length ? window.sharedAppMemory.indicators.join(', ') : 'Ninguno específico'}
+- Evidencia Adjunta: ${window.sharedAppMemory.attachedFiles && window.sharedAppMemory.attachedFiles.length ? window.sharedAppMemory.attachedFiles.map(f => f.name).join(', ') : 'Sin archivos adjuntos'}
+- Dictamen Diagnóstico Clínico Completo Emitido:
+"""
+${window.sharedAppMemory.fullDiagnosticText}
+"""
+
+`;
+      } else if (window.activeDiagnosticContext) {
+        contextPrefix = `[CONTEXTO DE DIAGNÓSTICO EN MEMORIA DEL EVALUADOR CLÍNICO]:\n"""\n${window.activeDiagnosticContext}\n"""\n\n`;
+      }
+
+      try {
+        const result = await executeGeminiCascade({
+          prompt: contextPrefix + userPrompt,
+          systemInstruction: systemInstr,
+          onModelSwitch: (statusMsg) => {
+            loadingMsg.modelUsed = statusMsg || 'Consultando en paralelo...';
+            renderCurrentChatMessages();
+          }
+        });
+
+        session.messages.pop();
+        session.messages.push({
+          role: 'assistant',
+          text: result.text,
+          modelUsed: result.modelUsed,
+          badgeText: result.badgeText
+        });
+      } catch (err) {
+        session.messages.pop();
+        session.messages.push({
+          role: 'assistant',
+          text: `⚠️ **Error en la consulta:** ${err.message}`,
+          modelUsed: 'Error'
+        });
+      } finally {
+        saveChatSessions();
+        renderCurrentChatMessages();
+      }
+    }
+
+    function handleChatKeydown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chatInput') || document.getElementById('chat-input-textarea');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text && chatFileAttachments.length === 0) return;
+      if (!apiKey) {
+        openApiKeyModal();
+        return;
+      }
+
+      const session = chatSessions.find(s => s.id === currentSessionId);
+      if (!session) return;
+
+      // Update session title on first user message if default
+      if (session.title.includes('Nueva Consulta') || session.title.includes('Consulta Abierta')) {
+        session.title = text ? (text.slice(0, 32) + (text.length > 32 ? '...' : '')) : (chatFileAttachments[0]?.name || 'Consulta con Adjuntos');
+        renderChatSessionsList();
+      }
+
+      // Add user message to state
+      let userDisplay = text;
+      if (chatFileAttachments.length > 0) {
+        const fileBadges = chatFileAttachments.map(f => {
+          const mime = f.type || 'documento';
+          const size = f.size || 'OK';
+          return `\`[📎 Procesado por Gemini: ${f.name} | Tipo: ${mime} | Tamaño: ${size} | Status: Ingesta Exitosa]\``;
+        }).join('\n\n');
+        userDisplay = `${fileBadges}\n\n` + userDisplay;
+      }
+
+      session.messages.push({
+        role: 'user',
+        text: userDisplay
+      });
+
+      const attachmentsToSend = [...chatFileAttachments];
+      input.value = '';
+      autoResizeTextarea(input);
+      removeChatFile(); // Clears chatFileAttachments and hides preview
+      renderCurrentChatMessages();
+
+      // System context with history & optional diagnostic continuity
+      let contextPrefix = "";
+      if (window.sharedAppMemory && window.sharedAppMemory.hasActiveCase && window.sharedAppMemory.fullDiagnosticText) {
+        contextPrefix = `[CONTEXTO DE DIAGNÓSTICO EN MEMORIA COLECTIVA UNIFICADA]:
+- Alcance del Caso: ${window.sharedAppMemory.caseScope || 'Estudiante'}
+- Área Académica: ${window.sharedAppMemory.area || 'General'}
+- Contexto Institucional: ${window.sharedAppMemory.context || 'Estándar'}
+- Indicadores Observados: ${window.sharedAppMemory.indicators && window.sharedAppMemory.indicators.length ? window.sharedAppMemory.indicators.join(', ') : 'Ninguno específico'}
+- Evidencia Adjunta: ${window.sharedAppMemory.attachedFiles && window.sharedAppMemory.attachedFiles.length ? window.sharedAppMemory.attachedFiles.map(f => f.name).join(', ') : 'Sin archivos adjuntos'}
+- Dictamen Diagnóstico Clínico Completo Emitido:
+"""
+${window.sharedAppMemory.fullDiagnosticText}
+"""
+
+`;
+      } else if (window.activeDiagnosticContext) {
+        contextPrefix = `[CONTEXTO DE DIAGNÓSTICO EN MEMORIA DEL EVALUADOR CLÍNICO]:\n"""\n${window.activeDiagnosticContext}\n"""\n\n`;
+      } else if (session.attachedContext) {
+        contextPrefix = `[CONTEXTO DE TRIAJE PREVIO]:\nAlcance: ${session.attachedContext.scope}\nÁrea: ${session.attachedContext.area}\nDictamen Clínico:\n${session.attachedContext.fullResponse}...\n\n`;
+      }
+
+      const systemInstr = buildSystemPrompt(session.attachedContext ? session.attachedContext.scope : 'individual') + 
+        `\nEstás en una conversación de consultoría en vivo con el docente. Responde con calidez profesional, rigor conceptual de los 28 papers de Consensus, tablas si se solicitan rúbricas, y traduce cualquier concepto anglosajón al español con su nota aclaratoria obligatoria.\nREGLA DE CONFIRMACIÓN DOCUMENTAL: Siempre que el usuario adjunte uno o varios archivos (imágenes, PDFs, Word, Excel, texto), es OBLIGATORIO que el primer párrafo de tu respuesta mencione explícitamente los nombres de los archivos analizados y cite textualmente al menos un dato, frase, variable o detalle visual extraído directamente de ellos para evidenciar de forma fehaciente su lectura y procesamiento.`;
+
+      const promptToModel = contextPrefix + `Consulta del docente:\n${text || 'Por favor analice los archivos adjuntos proporcionados.'}`;
+
+      const loadingMsg = {
+        role: 'assistant',
+        text: 'Analizando con razonamiento pedagógico...',
+        modelUsed: 'Consulta Simultánea Flash'
+      };
+      session.messages.push(loadingMsg);
+      renderCurrentChatMessages();
+
+      try {
+        const result = await executeGeminiCascade({
+          prompt: promptToModel,
+          systemInstruction: systemInstr,
+          attachments: attachmentsToSend,
+          onModelSwitch: (statusMsg) => {
+            loadingMsg.modelUsed = statusMsg || 'Consultando en paralelo...';
+            renderCurrentChatMessages();
+          }
+        });
+
+        // Replace loading message with genuine response
+        session.messages.pop();
+        session.messages.push({
+          role: 'assistant',
+          text: result.text,
+          modelUsed: result.modelUsed,
+          badgeText: result.badgeText
+        });
+      } catch (err) {
+        session.messages.pop();
+        session.messages.push({
+          role: 'assistant',
+          text: `⚠️ **Error en la consulta:** ${err.message}`,
+          modelUsed: 'Error'
+        });
+      } finally {
+        saveChatSessions();
+        renderCurrentChatMessages();
+      }
+    }
+
+    // Alias for compatibility
+    const sendMessage = sendChatMessage;
+
+    function insertSuggestion(text) {
+      const input = document.getElementById('chatInput') || document.getElementById('chat-input-textarea');
+      if (input) {
+        input.value = text;
+        sendMessage();
+      }
+    }
+
+    // --- TECHNIQUE MODAL (ℹ️ TOOLTIP) ---
+    const TECHNIQUES = {
+      rubrica: {
+        title: "Rúbrica de Procesos (Draft-First)",
+        body: `**Fundamento: Shen et al. (2026) / Chen & Alibakhshi (2025)**\n\n- En lugar de evaluar únicamente el entregable terminado (que un LLM puede redactar sin esfuerzo), esta rúbrica distribuye la nota:\n  * **50%:** Trazabilidad, bocetos manuscritos previos y bitácora de auditoría crítica de los borradores del modelo.\n  * **50%:** Calidad conceptual, argumentación personal y defensa de las decisiones tomadas.\n\n*Glosario:* **Draft-First** significa "Borrador Previo No Digital", una técnica de fricción donde el estudiante plasma sus ideas primarias en papel o pizarra antes de recurrir a la IA.`
+      },
+      defensa: {
+        title: "Defensa Oral Socrática Rápida (5 min)",
+        body: `**Fundamento: Vendrell & Johnston (2026)**\n\n- Entrevistas relámpago donde el docente no interroga sobre memoria estática, sino sobre **variación de parámetros:**\n  * *'¿Qué pasaría con la solución si cambiamos la variable X por Y?'*\n  * *'¿Por qué descartaste el camino analítico alternativo Z?'*\n\n*Glosario:* Desenmascara la **Ilusión de Competencia (Efecto Dunning-Kruger)**, donde el alumno cree dominar el tema porque la IA generó una respuesta fluida.`
+      },
+      culpa: {
+        title: "Mitigación de Culpa y Ansiedad por IA",
+        body: `**Fundamento: Chan (2025)**\n\n- El 62% de estudiantes que usan LLMs experimentan conflicto moral, temor al castigo o **Síndrome del Impostor Digital**.\n- El docente establece reglas transparentes de complementariedad en lugar de una vigilancia paranoica con detectores no fiables, restaurando la confianza y la agencia del aprendiz.`
+      },
+      auditoria: {
+        title: "Auditoría Grupal de Alucinaciones",
+        body: `**Fundamento: Si et al. (2026) / Adorni (2025)**\n\n- Actividad donde el docente suministra una respuesta generada por IA con 3 errores conceptuales sutiles inyectados.\n- Los equipos deben identificar, refutar con fuentes validadas y corregir los errores, transformando la IA en objeto de estudio crítico.`
+      },
+      inversa: {
+        title: "Ingeniería Inversa y Reescritura Grupal",
+        body: `**Fundamento: Jia et al. (2026) / Noller (2025)**\n\n- Dinámica en la que los estudiantes parten de un producto final generado por IA y deben reconstruir colectivamente el diagrama conceptual, los supuestos teóricos y las limitaciones éticas sin usar dispositivos.`
+      }
+    };
+
+    function showTechniqueModal(key) {
+      const tech = TECHNIQUES[key];
+      if (!tech) return;
+      document.getElementById('techniqueModalTitle').innerHTML = `<i class="fa-solid fa-circle-info text-blue-400 mr-2"></i> ` + tech.title;
+      document.getElementById('techniqueModalBody').innerHTML = renderSafeMarkdown(tech.body);
+      document.getElementById('techniqueModal').classList.remove('hidden');
+    }
+
+    function closeTechniqueModal() {
+      document.getElementById('techniqueModal').classList.add('hidden');
+    }
+
+    // --- TEMPLATE COPIER (BIBLIOTECA) ---
+    const TEMPLATES = {
+      draftFirst: `MATRIZ DRAFT-FIRST (BORRADOR PREVIO NO DIGITAL)
+[Asignatura / Módulo]:
+[Estudiante / Equipo]:
+
+FASE 1: ESQUEMA CONCEPTUAL ANALÓGICO (OBLIGATORIO PRE-IA)
+- Entregar en papel manuscrito o pizarra fotografiada:
+  1. Definición del problema en sus propias palabras (3 líneas).
+  2. Diagrama de flujo, árbol de decisiones o mapa conceptual inicial.
+  3. Hipótesis o solución tentativa preliminar.
+
+FASE 2: AUDITORÍA DE LA INTERACCIÓN CON IA (SI SE UTILIZA)
+- Prompt inicial utilizado:
+- Identificación de alucinaciones o imprecisiones en la respuesta del modelo:
+- Modificaciones sustanciales realizadas por el estudiante:`,
+
+      bitacoraPrompts: `RÚBRICA DE PROCESOS: EVALUACIÓN DE TRAZABILIDAD Y PENSAMIENTO CRÍTICO
+1. Calidad del Borrador Original Humano (Draft-First): 25%
+2. Auditoría y Refutación de Respuestas de IA: 25%
+3. Aporte Creativo y Voz Propia del Estudiante: 25%
+4. Transferencia y Justificación en Plenaria: 25%`,
+
+      socraticDefense: `PROTOCOLO DE DEFENSA ORAL SOCRÁTICA (5 MINUTOS)
+Pregunta 1 (Mecánica interna): Explica paso a paso por qué se eligió este enfoque y no el estándar.
+Pregunta 2 (Variación de parámetros): Si el presupuesto o la condición límite fuera [X], ¿qué parte de tu solución colapsa primero?
+Pregunta 3 (Crítica reflexiva): ¿Qué recomendación de la IA descartaste expresamente por no tener sentido en este contexto?`,
+
+      afectiva: `PAUTA DE CONTENCIÓN AFECTIVA (Chan 2025)
+1. Despenalizar la curiosidad: "El uso de la IA no te hace menos capaz ni culpable; lo que evaluamos es tu voz reflexiva."
+2. Validar el esfuerzo: "¿En qué momentos sentiste que la IA te ahorró tiempo pero te privó de comprender a fondo?"
+3. Reencuadre de complementariedad: "La IA es el borrador rápido; tú eres el árbitro epistémico."`
+    };
+
+    function copiarTemplate(key, triggerButton = null) {
+      const text = TEMPLATES[key];
+      if (!text) return;
+      copyTextToClipboard(text, triggerButton);
+    }
+
+    // --- EVIDENCE CARDS RENDERING ---
+    function renderEvidenceCards(filter = '') {
+      const container = document.getElementById('evidenceCardsGrid');
+      if (!container) return;
+      const filtered = EVIDENCE_PAPERS.filter(p => {
+        const query = (filter || '').toLowerCase().trim();
+        if (!query) return true;
+        return p.author.toLowerCase().includes(query) ||
+               p.title.toLowerCase().includes(query) ||
+               p.desc.toLowerCase().includes(query) ||
+               p.tags.some(t => t.toLowerCase().includes(query));
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-slate-500 bg-slate-900/50 rounded-xl border border-slate-800">No se encontraron investigaciones o conceptos que coincidan con la búsqueda.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(p => `
+        <div class="w-full max-w-full bg-slate-900 border border-slate-800 rounded-xl p-4 overflow-hidden box-border">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+            <h3 class="text-blue-400 font-bold text-base sm:text-lg break-words">${p.author}</h3>
+            <div class="flex flex-wrap gap-1.5 max-w-full">
+              ${p.tags.map(t => `<span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 whitespace-normal break-words">${t}</span>`).join('')}
+            </div>
+          </div>
+          <h4 class="text-xs sm:text-sm font-medium text-slate-200 mb-2 break-words italic">${p.title}</h4>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed break-words text-justify">${p.desc}</p>
+        </div>
+      `).join('');
+    }
+
+    function filterEvidence(val) {
+      renderEvidenceCards(val);
+    }
+
+    // --- API KEY MODAL CONTROLS ---
+    function openApiKeyModal() {
+      document.getElementById('inputApiKey').value = apiKey;
+      document.getElementById('apiKeyModal').classList.remove('hidden');
+    }
+
+    function closeApiKeyModal() {
+      document.getElementById('apiKeyModal').classList.add('hidden');
+    }
+
+    function saveApiKey() {
+      const val = document.getElementById('inputApiKey').value.trim();
+      apiKey = val;
+      localStorage.setItem('edu_ai_gemini_api_key', val);
+      closeApiKeyModal();
+      updateApiKeyUI();
+      refreshModelsList();
+      showToastNotification("API Key configurada correctamente.");
+    }
+
+    function updateApiKeyUI() {
+      const btnText = document.getElementById('apiKeyBtnText');
+      if (apiKey) {
+        btnText.textContent = 'API Key Configurada';
+      } else {
+        btnText.textContent = 'Configurar API Key';
+      }
+    }
+
+    // --- EVENT DELEGATION & MOBILE EVENT LISTENERS ---
+    document.addEventListener("DOMContentLoaded", () => {
+      // Mobile Keyboard Scroll & Dynamic Height on Chat Input Focus/Input
+      const chatInput = document.getElementById("chat-input-textarea") || document.getElementById("chatInput");
+      if (chatInput) {
+        const resizeAndScroll = function() {
+          this.style.height = "auto";
+          this.style.height = Math.min(this.scrollHeight, 150) + "px";
+          this.scrollTop = this.scrollHeight;
+        };
+        chatInput.addEventListener("input", resizeAndScroll);
+        chatInput.addEventListener("keyup", resizeAndScroll);
+        chatInput.addEventListener("focus", function() {
+          setTimeout(() => {
+            this.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }, 300);
+        });
+      }
+    });
+
+    // Delegate Click for Continuity Button
+    document.addEventListener("click", function (e) {
+      const btn = e.target.closest("#btn-continuar-consultor") || (e.target.id === "btn-continuar-consultor" ? e.target : null);
+      if (btn) {
+        e.preventDefault();
+        continuarEnConsultorEnVivo();
+      }
+    });
+  </script>
+
+  <!-- INFORME DE DIAGNÓSTICO DE CONECTIVIDAD Y CUOTA (MODAL DE EMERGENCIA) -->
+  <div id="diagnosticReportModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl flex flex-col max-h-[90vh] space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-lg bg-red-950/80 border border-red-800 flex items-center justify-center text-red-400 flex-shrink-0">
+            <i class="fa-solid fa-triangle-exclamation text-base"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-white">Informe de Diagnóstico de Conectividad y Cuota</h3>
+            <p class="text-[11px] text-slate-400">Detalle de peticiones y respuestas del motor en cascada Flash</p>
+          </div>
+        </div>
+        <button onclick="closeDiagnosticReportModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition" title="Cerrar modal">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Diagnostic Table -->
+      <div class="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950/80 max-h-56">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="border-b border-slate-800 bg-slate-900/90 text-[11px] text-slate-400 sticky top-0">
+              <th class="p-2.5 font-semibold">Modelo Intentado</th>
+              <th class="p-2.5 font-semibold">Código / Estado</th>
+              <th class="p-2.5 font-semibold">Mensaje Exacto devuelto por Google / Red</th>
+            </tr>
+          </thead>
+          <tbody id="diagnosticTableBody">
+            <!-- Injected via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Quick Solution Guide -->
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3.5 text-xs space-y-2 text-slate-300">
+        <div class="font-semibold text-slate-200 flex items-center gap-1.5 text-xs">
+          <i class="fa-solid fa-lightbulb text-amber-400"></i>
+          <span>Guía Rápida de Solución:</span>
+        </div>
+        <ul class="space-y-1.5 text-[11px] text-slate-400 list-disc list-inside">
+          <li><strong class="text-slate-300">Error 429 (limit: 0 para un modelo):</strong> Su proyecto de Google Cloud tiene cuota cero asignada para ese endpoint o la cuota libre expiró. Se sugiere generar una nueva API Key en <span class="text-blue-400 underline cursor-pointer" onclick="window.open('https://aistudio.google.com/app/apikey', '_blank')">aistudio.google.com</span> en un proyecto limpio sin restricciones.</li>
+          <li><strong class="text-slate-300">Error de Red / CORS (Failed to fetch):</strong> Al ejecutar desde el sistema de archivos local (<code class="text-slate-300 bg-slate-900 px-1 py-0.5 rounded">file://</code>), el navegador móvil puede bloquear la llamada directa a la API por políticas de origen cruzado. Ejecute la app mediante un servidor local (<code class="text-slate-300 bg-slate-900 px-1 py-0.5 rounded">http://localhost</code>) o hosting web.</li>
+          <li><strong class="text-slate-300">Error 400 / 403:</strong> Clave de API malformada o no habilitada en su región. Pulse "Cambiar API Key" para reconfigurarla.</li>
+        </ul>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800">
+        <button id="btnCopyDiagnostic" onclick="copyDiagnosticReport()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition">
+          <i class="fa-solid fa-copy text-blue-400"></i>
+          <span>Copiar Registro de Error</span>
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="closeDiagnosticReportModal(); openApiKeyModal();" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-sm">
+            <i class="fa-solid fa-key"></i>
+            <span>Cambiar API Key</span>
+          </button>
+          <button onclick="closeDiagnosticReportModal()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-notification" class="fixed bottom-5 right-5 bg-slate-900 border border-slate-700 text-slate-100 text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-2xl z-50 flex items-center gap-2 transition-all duration-300 hidden"></div>
+
+</body>
+</html>
