@@ -1445,14 +1445,15 @@
     // --- MODEL CASCADE & BENCHMARKS (LITE-FIRST ASCENDING FLASH CASCADE) ---
     const FLASH_CASCADE_PRIORITY = [
       // 1. PRIMERA PRIORIDAD: Familia Flash-Lite (Lite-First)
-      "gemini-3.5-flash-lite",
+      "gemini-3.6-flash-lite",
       "gemini-3.1-flash-lite",
       "gemini-flash-lite-latest",
       // 2. SEGUNDA PRIORIDAD: Familia Flash ascendente hasta 3.8
-      "gemini-3.5-flash",
       "gemini-3.6-flash",
-      "gemini-3.7-flash",
       "gemini-3.8-flash",
+      "gemini-flash-latest",
+      // 3. RESPALDO FINAL: alias siempre vigentes (reintento garantizado)
+      "gemini-flash-lite-latest",
       "gemini-flash-latest"
     ];
 
@@ -1569,13 +1570,14 @@
 
       // Prioridad jerárquica estricta: Familia Flash-Lite primero, luego Flash ascendente hasta 3.8
       const hierarchyOrder = [
-        "gemini-3.5-flash-lite",
+        "gemini-3.6-flash-lite",
         "gemini-3.1-flash-lite",
         "gemini-flash-lite-latest",
-        "gemini-3.5-flash",
-        "gemini-3.6-flash",
-        "gemini-3.7-flash",
-        "gemini-3.8-flash",
+          "gemini-3.6-flash",
+          "gemini-3.8-flash",
+        "gemini-flash-latest",
+        // RESPALDO FINAL: alias siempre vigentes
+        "gemini-flash-lite-latest",
         "gemini-flash-latest"
       ];
 
@@ -2789,7 +2791,7 @@ Por favor, elabore el dictamen en los 4 BLOQUES estructurados solicitados en las
                 <div class="flex flex-wrap items-center justify-between gap-1.5 text-[10px] text-blue-400 font-mono mb-2 pb-1 border-b border-slate-800">
                   <div class="flex items-center gap-1 truncate max-w-[240px] sm:max-w-md">
                     <i class="fa-solid fa-bolt text-amber-400"></i>
-                    <span class="truncate">${msg.badgeText || ('⚡ Respondido por: ' + (msg.modelUsed || 'gemini-3.5-flash-lite'))}</span>
+                    <span class="truncate">${msg.badgeText || ('⚡ Respondido por: ' + (msg.modelUsed || 'gemini-3.6-flash-lite'))}</span>
                   </div>
                   <div class="flex items-center gap-1.5">
                     <button type="button" onclick="copyChatMessage(${idx}, this)" class="text-slate-400 hover:text-slate-200 px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700/60 transition flex items-center gap-1" title="Copiar respuesta">
