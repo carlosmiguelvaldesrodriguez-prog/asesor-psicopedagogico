@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-slate-950 text-slate-100">
+<html lang="es" data-theme="consultorio">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
   <title>Asesor Psicopedagógico</title>
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS CDN (requerido: el JS conmuta clases de utilidad dinámicamente) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome 6 Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -14,946 +14,1245 @@
   <!-- Parsers: SheetJS & Mammoth -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              800: '#1e40af',
-              900: '#1e3a8a',
-              950: '#0f172a'
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Tipografías: Fraunces (display editorial) + Inter (cuerpo) + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-    body { font-family: 'Inter', sans-serif; }
+    /* ============================================================
+       SISTEMA DE DISEÑO "CONSULTORIO" — estética editorial académica
+       Tokens inspirados en el patrón de temas de daisyUI (CSS vars)
+       y en la rampa cálida de superficies (Clay / awesome-design-md)
+       ============================================================ */
+    [data-theme="consultorio"] {
+      --paper: #FAF6EF;          /* fondo papel cálido */
+      --paper-deep: #F3EDE2;     /* secciones alternas */
+      --card: #FFFFFF;           /* tarjetas */
+      --ink: #1C1917;            /* tinta principal */
+      --ink-soft: #57534E;       /* texto secundario */
+      --ink-faint: #8A8378;      /* texto tenue */
+      --teal: #0F766E;           /* primario */
+      --teal-deep: #115E59;      /* primario hover */
+      --teal-tint: #E6F2F0;      /* tinte teal */
+      --teal-line: #99C7C2;      /* borde teal */
+      --terracotta: #C2410C;     /* acento */
+      --terracotta-deep: #9A3412;
+      --terracotta-tint: #FDF0E7;
+      --terracotta-line: #F5C9A8;
+      --line: #E7E0D3;           /* bordes cálidos */
+      --line-strong: #D8CDB8;
+      --amber-tint: #FEF6E8;
+      --danger-tint: #FEF2F2;
+      --danger: #B91C1C;
+      --danger-line: #FECACA;
+      --shadow-warm: 0 1px 2px rgba(120, 96, 60, .06), 0 8px 24px -12px rgba(120, 96, 60, .18);
+      --shadow-warm-lg: 0 2px 4px rgba(120, 96, 60, .08), 0 20px 44px -16px rgba(120, 96, 60, .28);
+      --radius: 1rem;
+    }
 
-    /* Markdown Rendering & Table Styles */
-    .prose-markdown {
-      color: #cbd5e1;
-      font-size: 0.875rem;
-      line-height: 1.625;
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    .prose-markdown h1, .prose-markdown h2, .prose-markdown h3, .prose-markdown h4 {
-      color: #f8fafc;
-      font-weight: 700;
-      margin-top: 1rem;
-      margin-bottom: 0.5rem;
+    .font-display { font-family: 'Fraunces', Georgia, serif; }
+    .font-mono2 { font-family: 'JetBrains Mono', monospace; }
+
+    ::selection { background: var(--teal-tint); }
+
+    /* Scrollbar cálido y sutil */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 8px; border: 2px solid var(--paper); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ---------- Focus visible (ui-ux-pro-max) ---------- */
+    :focus-visible {
+      outline: 3px solid var(--teal);
+      outline-offset: 2px;
+      border-radius: 6px;
     }
-    .prose-markdown h1 { font-size: 1.4rem; color: #60a5fa; }
-    .prose-markdown h2 { font-size: 1.2rem; border-bottom: 1px solid #334155; padding-bottom: 0.25rem; color: #93c5fd; }
-    .prose-markdown h3 { font-size: 1.05rem; color: #38bdf8; }
-    .prose-markdown p { margin-bottom: 0.75rem; }
-    .prose-markdown ul { list-style-type: disc; margin-left: 1.25rem; margin-bottom: 0.75rem; }
-    .prose-markdown ol { list-style-type: decimal; margin-left: 1.25rem; margin-bottom: 0.75rem; }
-    .prose-markdown li { margin-bottom: 0.25rem; }
-    .prose-markdown strong { color: #f1f5f9; font-weight: 600; }
-    
-    /* Dedicated Modern Markdown Tables */
-    .prose-markdown .table-wrapper {
-      width: 100%;
-      overflow-x: auto;
-      margin: 1rem 0;
-      border-radius: 0.5rem;
-      border: 1px solid #334155;
-      background: #090d16;
+
+    /* ---------- Header superior ---------- */
+    .app-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: .75rem; padding: 0 .9rem;
+      min-height: 60px; flex-shrink: 0;
+      background: var(--card);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(120,96,60,.05);
+      z-index: 30;
     }
-    .prose-markdown table {
-      width: 100%;
-      min-width: 500px;
-      border-collapse: separate;
-      border-spacing: 0;
-      font-size: 0.825rem;
+    .brand { display: flex; align-items: center; gap: .7rem; min-width: 0; }
+    .brand-mark {
+      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+      background: var(--teal); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.05rem; box-shadow: var(--shadow-warm);
     }
-    .prose-markdown th {
-      background-color: #1e293b;
-      color: #93c5fd;
-      padding: 0.65rem 0.85rem;
-      font-weight: 600;
-      text-align: left;
-      border-bottom: 1px solid #334155;
+    .brand-title {
+      font-family: 'Fraunces', serif; font-weight: 600;
+      font-size: 1.06rem; letter-spacing: -.01em; color: var(--ink);
+      margin: 0; line-height: 1.15; white-space: nowrap;
+    }
+    .brand-sub {
+      margin: 0; font-size: .68rem; color: var(--ink-faint);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .header-actions { display: flex; align-items: center; gap: .6rem; flex-shrink: 0; }
+    .cascade-badge {
+      display: flex; align-items: center; gap: .45rem;
+      padding: .42rem .8rem; border-radius: 999px;
+      background: var(--paper-deep); border: 1px solid var(--line);
+      font-size: .72rem; font-weight: 600; color: var(--ink-soft);
+      max-width: 220px;
+    }
+    .cascade-badge span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); flex-shrink: 0; animation: pulse-soft 2s infinite; }
+    @keyframes pulse-soft { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+    .header-drawer-toggle { display: none !important; }
+
+    /* ---------- Botones ---------- */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+      min-height: 44px; padding: .65rem 1.1rem;
+      border-radius: .8rem; font-size: .83rem; font-weight: 600;
+      border: 1px solid transparent; cursor: pointer;
+      transition: background .15s ease, transform .1s ease, box-shadow .15s ease;
+      text-decoration: none; white-space: nowrap;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-primary { background: var(--teal); color: #fff; box-shadow: var(--shadow-warm); }
+    .btn-primary:hover { background: var(--teal-deep); }
+    .btn-outline { background: var(--card); color: var(--ink-soft); border-color: var(--line-strong); }
+    .btn-outline:hover { background: var(--paper-deep); color: var(--ink); }
+    .btn-terracotta { background: var(--terracotta); color: #fff; }
+    .btn-terracotta:hover { background: var(--terracotta-deep); }
+    .btn-sm { min-height: 38px; padding: .45rem .85rem; font-size: .76rem; border-radius: .65rem; }
+    .icon-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 44px; height: 44px; border-radius: .8rem; flex-shrink: 0;
+      background: var(--card); border: 1px solid var(--line); color: var(--ink-soft);
+      cursor: pointer; transition: background .15s ease;
+    }
+    .icon-btn:hover { background: var(--paper-deep); color: var(--ink); }
+
+    /* ---------- App shell: sidebar + main ---------- */
+    .app-shell { display: flex; flex: 1; min-height: 0; }
+
+    .sidebar {
+      width: 240px; flex-shrink: 0;
+      background: var(--card); border-right: 1px solid var(--line);
+      display: none; flex-direction: column;
+      padding: 1rem .8rem;
+    }
+    @media (min-width: 1024px) { .sidebar { display: flex; } }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .sidebar-nav-label {
+      font-size: .66rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--ink-faint); padding: .4rem .8rem .2rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: .7rem;
+      min-height: 44px; padding: .6rem .8rem; border-radius: .8rem;
+      font-size: .84rem; font-weight: 500; color: var(--ink-soft);
+      background: transparent; border: 1px solid transparent; cursor: pointer;
+      transition: background .15s ease, color .15s ease; text-align: left; width: 100%;
+    }
+    .nav-item i { width: 20px; text-align: center; font-size: .95rem; color: var(--ink-faint); flex-shrink: 0; }
+    .nav-item:hover { background: var(--paper-deep); color: var(--ink); }
+    .nav-item:hover i { color: var(--teal); }
+    /* Estado activo inyectado por el JS (bg-blue-600 text-white shadow-md) */
+    .nav-item.bg-blue-600 { background: var(--teal) !important; color: #fff !important; font-weight: 600; box-shadow: var(--shadow-warm); }
+    .nav-item.bg-blue-600 i { color: #fff !important; }
+    .sidebar-footer { padding-top: .8rem; border-top: 1px solid var(--line); margin-top: .8rem; }
+    .engine-card {
+      background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: .7rem .85rem; display: flex; flex-direction: column; gap: .3rem;
+    }
+    .engine-label { font-size: .66rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-faint); }
+    .engine-status { display: flex; align-items: center; gap: .45rem; font-size: .8rem; font-weight: 600; color: var(--teal-deep); }
+
+    /* ---------- Bottom nav (móvil / tablet) ---------- */
+    .bottom-nav {
+      display: flex; flex-shrink: 0;
+      background: var(--card); border-top: 1px solid var(--line);
+      padding: .35rem .25rem calc(.35rem + env(safe-area-inset-bottom));
+      z-index: 30;
+    }
+    @media (min-width: 1024px) { .bottom-nav { display: none; } }
+    .bottom-nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 3px; min-height: 56px; padding: .35rem .1rem;
+      background: transparent; border: none; border-radius: .7rem;
+      font-size: .6rem; font-weight: 600; color: var(--ink-faint); cursor: pointer;
+    }
+    .bottom-nav-item i { font-size: 1.05rem; }
+    .bottom-nav-item.bg-blue-600 { background: var(--teal-tint) !important; color: var(--teal-deep) !important; }
+
+    /* Drawer móvil original: se conserva en el DOM por compatibilidad con el JS,
+       pero permanece oculto (la navegación móvil usa la barra inferior). */
+    #mobileDrawer, #drawerBackdrop { display: none !important; }
+
+    /* ---------- Main y vistas ---------- */
+    main.app-main { flex: 1; min-width: 0; overflow-y: auto; background: var(--paper); }
+    main.app-main.overflow-hidden { overflow: hidden; }
+    main.app-main.h-full { height: 100%; }
+    .view { width: 100%; max-width: 72rem; margin: 0 auto; padding: 1.1rem .9rem 2.5rem; }
+    @media (min-width: 640px) { .view { padding: 1.6rem 1.5rem 3rem; } }
+    .view-head { border-bottom: 1px solid var(--line); padding-bottom: 1rem; margin-bottom: 1.25rem; }
+    .view-title {
+      font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.45rem;
+      letter-spacing: -.01em; color: var(--ink); margin: 0 0 .3rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .view-title i { color: var(--teal); font-size: 1.15rem; }
+    .view-lead { margin: 0; font-size: .86rem; color: var(--ink-soft); max-width: 44rem; line-height: 1.55; }
+
+    /* ---------- Tarjetas ---------- */
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      box-shadow: var(--shadow-warm); padding: 1.1rem;
+    }
+    @media (min-width: 640px) { .card { padding: 1.35rem; } }
+    .card-title {
+      font-family: 'Fraunces', serif; font-size: 1.02rem; font-weight: 600; color: var(--ink);
+      margin: 0 0 .15rem; display: flex; align-items: center; gap: .55rem;
+    }
+    .card-title i { color: var(--teal); }
+    .card-sub { font-size: .78rem; color: var(--ink-faint); margin: 0 0 .9rem; }
+    .section-label {
+      font-size: .68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+      color: var(--ink-faint); margin: 0 0 .5rem;
+      font-family: 'Fraunces', serif;
+    }
+    .divider { border: none; border-top: 1px solid var(--line); margin: 1rem 0; }
+
+    /* ---------- Formularios ---------- */
+    .field { margin-bottom: .9rem; }
+    .field-label {
+      display: block; font-family: 'Fraunces', serif; font-size: .8rem; font-weight: 600;
+      color: var(--ink); margin-bottom: .35rem;
+    }
+    .field-hint { font-size: .7rem; color: var(--ink-faint); margin-top: .3rem; }
+    .input, select.input, textarea.input {
+      width: 100%; background: var(--card); color: var(--ink);
+      border: 1px solid var(--line-strong); border-radius: .7rem;
+      padding: .65rem .85rem; font-size: .85rem; font-family: 'Inter', sans-serif;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    @media (max-width: 1023px) {
+      /* En móvil el badge de cascada se oculta: el estado vive en la barra inferior */
+      #cascadeStatusBadge { display: none; }
+      .header-actions { gap: .4rem; }
+      /* Botón API key icono-solo en móvil: no tapa el título */
+      .header-actions .btn span { display: none; }
+      .header-actions .btn { padding: .6rem; min-width: 44px; min-height: 44px; justify-content: center; }
+      .brand-sub { display: none; }
+      .brand-title { font-size: 1.02rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52vw; } .input, select.input, textarea.input { min-height: 44px; } }
+    .input::placeholder { color: var(--ink-faint); }
+    .input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-tint); }
+    textarea.input { resize: vertical; }
+
+    input[type="checkbox"] { accent-color: var(--teal); width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* Checklist dinámica (inyectada por JS) */
+    #dynamicChecklistContainer {
+      background: var(--paper); border: 1px solid var(--line); border-radius: .8rem;
+      padding: .7rem; max-height: 15rem; overflow-y: auto;
+    }
+    #dynamicChecklistContainer label { display: flex; }
+    #dynamicChecklistContainer .hover\:text-white:hover { color: var(--ink) !important; }
+    #dynamicChecklistContainer .hover\:bg-slate-900\/50:hover { background: var(--paper-deep) !important; }
+    #dynamicChecklistContainer .text-slate-300 { color: var(--ink-soft) !important; }
+
+    /* Chips de archivos adjuntos (inyectados por JS) */
+    #evalFilesPreview .bg-slate-900, #chatFilesPreview .bg-slate-800 { background: var(--card) !important; }
+    #evalFilesPreview .border-slate-700, #chatFilesPreview .border-slate-700 { border-color: var(--line-strong) !important; }
+    #evalFilesPreview .text-slate-200, #chatFilesPreview .text-slate-200 { color: var(--ink) !important; }
+    #evalFilesPreview .text-slate-400, #chatFilesPreview .text-slate-400 { color: var(--ink-faint) !important; }
+    #evalFilesPreview .hover\:bg-slate-800:hover, #chatFilesPreview .hover\:bg-slate-700:hover { background: var(--paper-deep) !important; }
+
+    /* Barra de progreso */
+    .progress-track { width: 100%; background: var(--paper-deep); border-radius: 999px; height: 6px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 100%; background: var(--teal); border-radius: 999px; animation: pulse-soft 1.2s infinite; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-size: .68rem; font-weight: 700; padding: .28rem .65rem; border-radius: 999px;
+      border: 1px solid var(--line); background: var(--paper-deep); color: var(--ink-soft);
       white-space: nowrap;
     }
-    .prose-markdown td {
-      padding: 0.6rem 0.85rem;
-      border-bottom: 1px solid #1e293b;
-      color: #cbd5e1;
+    .badge-teal { background: var(--teal-tint); border-color: var(--teal-line); color: var(--teal-deep); }
+    .badge-terracotta { background: var(--terracotta-tint); border-color: var(--terracotta-line); color: var(--terracotta-deep); }
+    .badge-amber { background: var(--amber-tint); border-color: #F5D9A8; color: #92600A; }
+
+    /* Banner de bienvenida del evaluador */
+    .welcome-banner {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      box-shadow: var(--shadow-warm); padding: 1.2rem;
+      display: flex; flex-direction: column; gap: .8rem;
+      border-left: 4px solid var(--teal);
     }
-    .prose-markdown tr:nth-child(even) td {
-      background-color: rgba(30, 41, 59, 0.35);
+    @media (min-width: 768px) { .welcome-banner { flex-direction: row; align-items: center; justify-content: space-between; } }
+    .welcome-banner h2 { font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 600; margin: .4rem 0 .3rem; letter-spacing: -.01em; }
+    .welcome-banner p { font-size: .83rem; color: var(--ink-soft); margin: 0; max-width: 40rem; line-height: 1.55; }
+
+    /* Selector de alcance */
+    .scope-card { display: flex; flex-direction: column; gap: .7rem; }
+    @media (min-width: 640px) { .scope-card { flex-direction: row; align-items: center; justify-content: space-between; } }
+    .scope-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; width: 100%; }
+    @media (min-width: 640px) { .scope-buttons { width: auto; } }
+
+    /* ---------- Chat ---------- */
+    .view-chat { max-width: none; height: 100%; display: flex; flex-direction: column; padding: 0; }
+    .chat-header {
+      display: flex; align-items: center; justify-content: space-between; gap: .6rem;
+      padding: .6rem .9rem; background: var(--card); border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
     }
-    .prose-markdown tr:hover td {
-      background-color: rgba(59, 130, 246, 0.08);
+    .chat-title { font-weight: 600; font-size: .88rem; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; font-family: 'Fraunces', serif; }
+    .model-chip {
+      font-family: 'JetBrains Mono', monospace; font-size: .66rem; color: var(--ink-soft);
+      background: var(--paper-deep); border: 1px solid var(--line);
+      padding: .3rem .6rem; border-radius: 999px; white-space: nowrap;
     }
-    .prose-markdown tr:last-child td {
-      border-bottom: none;
+    .chat-sidebar {
+      position: absolute; z-index: 20; top: 0; bottom: 0; left: 0;
+      width: 18rem; max-width: 85vw;
+      background: var(--card); border-right: 1px solid var(--line);
+      display: flex; flex-direction: column; box-shadow: var(--shadow-warm-lg);
+    }
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 1rem .9rem; background: var(--paper);
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    @media (min-width: 640px) { .chat-messages { padding: 1.4rem 1.6rem; } }
+    /* Burbujas generadas por JS: remapeo cálido */
+    #chatMessagesContainer .bg-slate-900 { background: var(--card) !important; }
+    #chatMessagesContainer .border-slate-800 { border-color: var(--line) !important; }
+    #chatMessagesContainer .text-slate-200 { color: var(--ink) !important; }
+    #chatMessagesContainer .text-slate-400 { color: var(--ink-soft) !important; }
+    #chatMessagesContainer .text-blue-400 { color: var(--teal) !important; }
+    #chatMessagesContainer .bg-slate-800 { background: var(--paper-deep) !important; }
+    #chatMessagesContainer .hover\:bg-slate-700:hover { background: var(--line) !important; }
+    #chatMessagesContainer .hover\:text-slate-200:hover { color: var(--ink) !important; }
+    #chatMessagesContainer .border-slate-700\/60 { border-color: var(--line) !important; }
+    #chatMessagesContainer .bg-red-950\/40 { background: var(--danger-tint) !important; }
+    #chatMessagesContainer .border-red-800 { border-color: var(--danger-line) !important; }
+    #chatMessagesContainer .text-red-200 { color: var(--danger) !important; }
+    #chatMessagesContainer .text-red-300 { color: var(--danger) !important; }
+    /* Burbuja del docente (JS usa bg-blue-600) */
+    #chatMessagesContainer .bg-blue-600 { background: var(--teal) !important; }
+
+    .chat-suggestions {
+      flex-shrink: 0; background: var(--card); border-top: 1px solid var(--line);
+      display: flex; gap: .5rem; overflow-x: auto; padding: .55rem .9rem; align-items: center;
+    }
+    .suggestion-label { font-size: .7rem; font-weight: 600; color: var(--ink-faint); white-space: nowrap; display: flex; align-items: center; gap: .3rem; }
+    .suggestion-label i { color: var(--terracotta); }
+    .suggestion-chip {
+      display: inline-flex; align-items: center; gap: .3rem; flex-shrink: 0;
+      background: var(--paper); border: 1px solid var(--line); border-radius: 999px;
+      padding: .42rem .7rem; font-size: .74rem; color: var(--ink-soft); white-space: nowrap;
+    }
+    .suggestion-chip > span:first-child { cursor: pointer; }
+    .suggestion-chip > span:first-child:hover { color: var(--teal-deep); }
+    .suggestion-chip button { background: none; border: none; color: var(--teal); cursor: pointer; padding: .2rem; font-size: .8rem; min-width: 28px; min-height: 28px; }
+    .chat-input-bar {
+      flex-shrink: 0; background: var(--card); border-top: 1px solid var(--line);
+      padding: .7rem .9rem calc(.7rem + env(safe-area-inset-bottom));
+      display: flex; align-items: flex-end; gap: .6rem;
     }
 
+    /* ---------- Biblioteca ---------- */
+    .template-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    @media (min-width: 768px) { .template-grid { grid-template-columns: 1fr 1fr; } }
+    .template-card { display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; }
+
+    /* ---------- Cascada ---------- */
+    .tier-grid { display: grid; grid-template-columns: 1fr; gap: .8rem; }
+    @media (min-width: 640px) { .tier-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .tier-grid { grid-template-columns: repeat(4, 1fr); } }
+    .tier-card { border-left: 4px solid var(--teal); }
+    .tier-card.tier-2 { border-left-color: var(--terracotta); }
+    .tier-kicker { font-size: .64rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--teal-deep); }
+    .tier-card.tier-2 .tier-kicker { color: var(--terracotta-deep); }
+    .tier-name { font-size: .82rem; font-weight: 600; color: var(--ink); margin: .15rem 0; }
+    .tier-desc { font-size: .72rem; color: var(--ink-faint); margin: 0; }
+    .data-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow-warm); }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: .78rem; text-align: left; }
+    table.data-table thead th {
+      padding: .7rem .9rem; font-size: .66rem; text-transform: uppercase; letter-spacing: .06em;
+      color: var(--ink-faint); border-bottom: 1px solid var(--line); background: var(--paper); white-space: nowrap;
+    }
+    table.data-table tbody td { padding: .7rem .9rem; border-bottom: 1px solid var(--line); color: var(--ink-soft); }
+    table.data-table tbody tr:last-child td { border-bottom: none; }
+    /* Filas inyectadas por JS */
+    #cascadeModelsTableBody .border-slate-800 { border-color: var(--line) !important; }
+    #cascadeModelsTableBody .hover\:bg-slate-800\/40:hover { background: var(--paper-deep) !important; }
+    #cascadeModelsTableBody .text-blue-400 { color: var(--teal-deep) !important; }
+    #cascadeModelsTableBody .text-slate-200 { color: var(--ink) !important; }
+    #cascadeModelsTableBody .text-slate-400 { color: var(--ink-soft) !important; }
+    #cascadeModelsTableBody .bg-amber-950 { background: var(--terracotta-tint) !important; }
+    #cascadeModelsTableBody .text-amber-300 { color: var(--terracotta-deep) !important; }
+    #cascadeModelsTableBody .border-amber-800 { border-color: var(--terracotta-line) !important; }
+    #cascadeModelsTableBody .bg-emerald-950 { background: var(--teal-tint) !important; }
+    #cascadeModelsTableBody .text-emerald-300 { color: var(--teal-deep) !important; }
+    #cascadeModelsTableBody .border-emerald-800 { border-color: var(--teal-line) !important; }
+    #cascadeModelsTableBody .bg-blue-950 { background: var(--teal-tint) !important; }
+    #cascadeModelsTableBody .border-blue-800 { border-color: var(--teal-line) !important; }
+
+    /* ---------- Evidencia ---------- */
+    .declaration {
+      background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--terracotta);
+      border-radius: var(--radius); padding: 1.1rem; box-shadow: var(--shadow-warm); margin-bottom: 1.25rem;
+    }
+    .declaration h4 { font-family: 'Fraunces', serif; font-size: 1rem; margin: 0 0 .5rem; display: flex; align-items: center; gap: .5rem; }
+    .declaration h4 i { color: var(--terracotta); }
+    .declaration p { font-size: .82rem; color: var(--ink-soft); line-height: 1.65; margin: 0 0 .6rem; }
+    .declaration .thesis {
+      background: var(--paper); border: 1px solid var(--line); border-radius: .7rem;
+      padding: .8rem; font-size: .8rem; color: var(--teal-deep); font-weight: 500; line-height: 1.6; margin: .7rem 0;
+    }
+    .declaration .thesis span { color: var(--ink-faint); font-weight: 400; }
+    .search-wrap { position: relative; margin-bottom: 1.1rem; }
+    .search-wrap i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--ink-faint); font-size: .8rem; }
+    .search-wrap .input { padding-left: 2.6rem; }
+    #evidenceCardsGrid { display: flex; flex-direction: column; gap: 1rem; }
+
+    /* ---------- Guía ---------- */
+    .guide-step { display: flex; gap: .9rem; align-items: flex-start; }
+    .guide-num {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      background: var(--teal); color: #fff; font-size: .78rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .guide-step h3 { font-size: .92rem; font-weight: 600; margin: 0 0 .35rem; color: var(--ink); }
+    .guide-step p { font-size: .82rem; color: var(--ink-soft); line-height: 1.65; margin: 0; }
+    .guide-step code { background: var(--paper-deep); border: 1px solid var(--line); border-radius: .3rem; padding: .05rem .35rem; font-size: .76em; font-family: 'JetBrains Mono', monospace; }
+
+    /* ---------- Estados del evaluador ---------- */
+    .state-card { text-align: center; padding: 2.2rem 1.5rem; }
+    .state-icon {
+      width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 1rem;
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .state-icon.idle { background: var(--paper-deep); color: var(--ink-faint); border: 1px dashed var(--line-strong); }
+    .state-icon.loading { background: var(--teal-tint); color: var(--teal); }
+    .state-icon.error { background: var(--danger-tint); color: var(--danger); border: 1px solid var(--danger-line); }
+    .state-card h4 { font-family: 'Fraunces', serif; font-size: 1.05rem; margin: 0 0 .4rem; }
+    .state-card p { font-size: .8rem; color: var(--ink-soft); max-width: 26rem; margin: 0 auto; line-height: 1.6; }
+    .result-banner {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem;
+      padding: .7rem .9rem;
+    }
+    .result-banner .ok-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+    .diag-block { border-left: 4px solid var(--teal); }
+    .diag-block.accent-amber { border-left-color: var(--terracotta); }
+    .diag-block.accent-green { border-left-color: #2F7D4F; }
+    .diag-block.accent-indigo { border-left-color: #6B5CA5; }
+    .diag-block h4 { display: flex; align-items: center; gap: .5rem; font-size: .9rem; font-weight: 700; margin: 0 0 .6rem; font-family: 'Fraunces', serif; }
+    .continuity-card { border-left: 4px solid var(--terracotta); display: flex; flex-direction: column; gap: .8rem; }
+    @media (min-width: 640px) { .continuity-card { flex-direction: row; align-items: center; justify-content: space-between; } }
+
+    /* ---------- Modales ---------- */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(28, 25, 23, .55); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-panel {
+      background: var(--card); border: 1px solid var(--line); border-radius: 1.1rem;
+      box-shadow: var(--shadow-warm-lg); width: 100%; max-width: 28rem;
+      padding: 1.3rem; max-height: 90dvh; overflow-y: auto;
+    }
+    .modal-panel.modal-lg { max-width: 40rem; }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .9rem; }
+    .modal-head h3 { font-family: 'Fraunces', serif; font-size: 1.08rem; margin: 0; display: flex; align-items: center; gap: .55rem; }
+    .modal-head h3 i { color: var(--terracotta); }
+    .modal-foot { display: flex; justify-content: flex-end; gap: .6rem; padding-top: .9rem; }
+    .info-note {
+      display: flex; gap: .6rem; align-items: flex-start;
+      background: var(--teal-tint); border: 1px solid var(--teal-line); border-radius: .7rem;
+      padding: .7rem .85rem; font-size: .74rem; color: var(--teal-deep); line-height: 1.55;
+    }
+    .info-note i { margin-top: .15rem; }
+
+    /* ---------- Toast ---------- */
+    #toast-notification.hidden { display: none !important; }
+    #toast-notification {
+      position: fixed; bottom: 1.25rem; right: 1.25rem; z-index: 60;
+      background: var(--ink); color: var(--paper);
+      font-size: .82rem; padding: .7rem 1rem; border-radius: .8rem;
+      box-shadow: var(--shadow-warm-lg); display: flex; align-items: center; gap: .5rem;
+      max-width: min(90vw, 24rem);
+    }
+
+    /* ---------- Markdown (prose-markdown) en tema cálido ---------- */
+    .prose-markdown { color: var(--ink-soft); font-size: .875rem; line-height: 1.7; overflow-wrap: break-word; }
+    .prose-markdown h1, .prose-markdown h2, .prose-markdown h3, .prose-markdown h4 {
+      font-family: 'Fraunces', serif; color: var(--ink); font-weight: 600; margin: 1rem 0 .5rem; line-height: 1.3;
+    }
+    .prose-markdown h1 { font-size: 1.3rem; }
+    .prose-markdown h2 { font-size: 1.12rem; border-bottom: 1px solid var(--line); padding-bottom: .3rem; }
+    .prose-markdown h3 { font-size: 1rem; }
+    .prose-markdown p { margin: 0 0 .75rem; }
+    .prose-markdown ul { list-style: disc; margin: 0 0 .75rem 1.25rem; padding: 0; }
+    .prose-markdown ol { list-style: decimal; margin: 0 0 .75rem 1.25rem; padding: 0; }
+    .prose-markdown li { margin-bottom: .3rem; }
+    .prose-markdown li::marker { color: var(--teal); }
+    .prose-markdown strong { color: var(--ink); font-weight: 700; }
+    .prose-markdown a { color: var(--teal-deep); text-decoration: underline; }
+    .prose-markdown .table-wrapper {
+      width: 100%; overflow-x: auto; margin: 1rem 0;
+      border-radius: .7rem; border: 1px solid var(--line); background: var(--card);
+    }
+    .prose-markdown table { width: 100%; min-width: 480px; border-collapse: collapse; font-size: .8rem; }
+    .prose-markdown th {
+      background: var(--paper-deep); color: var(--teal-deep);
+      padding: .6rem .8rem; font-weight: 700; text-align: left;
+      border-bottom: 1px solid var(--line); white-space: nowrap; font-size: .72rem;
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+    .prose-markdown td { padding: .55rem .8rem; border-bottom: 1px solid var(--line); color: var(--ink-soft); }
+    .prose-markdown tr:nth-child(even) td { background: var(--paper); }
+    .prose-markdown tr:last-child td { border-bottom: none; }
     .prose-markdown blockquote {
-      border-left: 4px solid #3b82f6;
-      padding: 0.5rem 1rem;
-      margin: 0.85rem 0;
-      color: #94a3b8;
-      font-style: italic;
-      background: rgba(30, 58, 138, 0.15);
-      border-radius: 0 0.375rem 0.375rem 0;
+      border-left: 4px solid var(--terracotta); padding: .6rem 1rem; margin: .9rem 0;
+      color: var(--ink-soft); font-style: italic; background: var(--terracotta-tint);
+      border-radius: 0 .6rem .6rem 0; font-size: .82rem;
     }
     .prose-markdown code {
-      background-color: #1e293b;
-      color: #fca5a5;
-      padding: 0.15rem 0.35rem;
-      border-radius: 0.25rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85em;
+      background: var(--paper-deep); border: 1px solid var(--line);
+      color: var(--terracotta-deep); padding: .1rem .35rem; border-radius: .3rem;
+      font-family: 'JetBrains Mono', monospace; font-size: .82em;
     }
-    .prose-markdown pre {
-      background-color: #0b0f19;
-      border: 1px solid #1e293b;
-      padding: 0.85rem;
-      border-radius: 0.5rem;
-      overflow-x: auto;
-      margin: 0.75rem 0;
+    .prose-markdown pre { background: var(--ink); border-radius: .7rem; padding: .9rem; overflow-x: auto; margin: .8rem 0; }
+    .prose-markdown pre code { background: transparent; border: none; color: var(--paper); padding: 0; }
+
+    /* ============================================================
+       REMAPEO GLOBAL de clases Tailwind generadas por el JS
+       (el JS original conmuta estas clases; se remapean al tema)
+       ============================================================ */
+    .bg-blue-600 { background-color: var(--teal) !important; }
+    .hover\:bg-blue-500:hover { background-color: var(--teal-deep) !important; }
+    .bg-blue-700\/60 { background-color: rgba(255,255,255,.16) !important; }
+    .hover\:bg-blue-700:hover { background-color: rgba(255,255,255,.28) !important; }
+    .text-blue-200 { color: #D7F3EE !important; }
+    .border-blue-500\/40 { border-color: rgba(255,255,255,.28) !important; }
+    .bg-blue-950 { background-color: var(--teal-tint) !important; }
+    .text-blue-400 { color: var(--teal-deep) !important; }
+    .text-blue-300 { color: var(--teal-deep) !important; }
+    .border-blue-800 { border-color: var(--teal-line) !important; }
+    .bg-indigo-950 { background-color: var(--terracotta-tint) !important; }
+    .text-indigo-400 { color: var(--terracotta-deep) !important; }
+    .border-indigo-800 { border-color: var(--terracotta-line) !important; }
+    .bg-slate-800 { background-color: var(--card) !important; }
+    .bg-slate-900 { background-color: var(--card) !important; }
+    .bg-slate-950 { background-color: var(--paper-deep) !important; }
+    .border-slate-700 { border-color: var(--line-strong) !important; }
+    .border-slate-800 { border-color: var(--line) !important; }
+    .text-slate-200 { color: var(--ink) !important; }
+    .text-slate-300 { color: var(--ink-soft) !important; }
+    .text-slate-400 { color: var(--ink-faint) !important; }
+    .text-slate-500 { color: var(--ink-faint) !important; }
+    .hover\:bg-slate-700:hover { background-color: var(--paper-deep) !important; }
+    .hover\:bg-slate-800:hover { background-color: var(--paper-deep) !important; }
+    .hover\:bg-slate-800\/40:hover { background-color: var(--paper-deep) !important; }
+    .hover\:bg-slate-900\/50:hover { background-color: var(--paper-deep) !important; }
+    .hover\:text-slate-200:hover { color: var(--ink) !important; }
+    .hover\:text-white:hover { color: var(--ink) !important; }
+    .bg-amber-950 { background-color: var(--terracotta-tint) !important; }
+    .text-amber-300 { color: var(--terracotta-deep) !important; }
+    .text-amber-400 { color: var(--terracotta) !important; }
+    .border-amber-800 { border-color: var(--terracotta-line) !important; }
+    .bg-emerald-950 { background-color: var(--teal-tint) !important; }
+    .text-emerald-300 { color: var(--teal-deep) !important; }
+    .text-emerald-400 { color: var(--teal) !important; }
+    .border-emerald-800 { border-color: var(--teal-line) !important; }
+    .bg-red-950\/40 { background-color: var(--danger-tint) !important; }
+    .border-red-800 { border-color: var(--danger-line) !important; }
+    .text-red-200 { color: var(--danger) !important; }
+    .text-red-300 { color: var(--danger) !important; }
+    .text-red-400 { color: #DC2626 !important; }
+
+    /* ---------- Accesibilidad: movimiento reducido ---------- */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001s !important; transition-duration: .001s !important; }
+      .pulse-dot { animation: none; }
     }
-    .prose-markdown pre code {
-      background: transparent;
-      color: #e2e8f0;
-      padding: 0;
+    .pb-safe { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+    .files-preview:not(.hidden) { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .result-stack:not(.hidden) { display: flex; flex-direction: column; gap: 1rem; }
+    .chat-files-preview:not(.hidden) { padding: .5rem .9rem; background: var(--card); border-top: 1px solid var(--line); }
+
+    /* ========== ANIMACIONES LOCALES (CSS puro, 0 datos móviles) ========== */
+    /* Todas usan transform/opacity (GPU) — nunca width/height/top/left */
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes pop-in {
+      0% { opacity: 0; transform: scale(.96); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .55; }
+    }
+    /* Entrada escalonada de tarjetas */
+    .anim-rise { animation: rise-in .45s cubic-bezier(.22,.8,.32,1) both; }
+    .anim-rise-1 { animation: rise-in .45s .05s cubic-bezier(.22,.8,.32,1) both; }
+    .anim-rise-2 { animation: rise-in .45s .1s cubic-bezier(.22,.8,.32,1) both; }
+    .anim-rise-3 { animation: rise-in .45s .15s cubic-bezier(.22,.8,.32,1) both; }
+    .anim-rise-4 { animation: rise-in .45s .2s cubic-bezier(.22,.8,.32,1) both; }
+    .anim-rise-5 { animation: rise-in .45s .25s cubic-bezier(.22,.8,.32,1) both; }
+    /* Transición de vistas */
+    .view-enter { animation: fade-in .3s ease-out both; }
+    /* Micro-interacción de botones */
+    .btn { transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease; }
+    .btn:active { transform: scale(.97); }
+    .navbtn, .bnb-btn { transition: transform .12s ease, background-color .2s ease, color .2s ease; }
+    .navbtn:active, .bnb-btn:active { transform: scale(.96); }
+    /* Tarjetas interactivas */
+    .card-hover { transition: transform .2s ease, box-shadow .25s ease; }
+    .card-hover:hover { transform: translateY(-2px); }
+    .card-hover:active { transform: translateY(0) scale(.99); }
+    /* Skeleton de carga */
+    .skeleton {
+      background: linear-gradient(90deg, var(--paper-deep) 25%, var(--card) 50%, var(--paper-deep) 75%);
+      background-size: 200% 100%; animation: shimmer 1.4s infinite linear; border-radius: .5rem;
+    }
+    /* Pulso suave para estado "pensando" */
+    .thinking { animation: pulse-soft 1.6s ease-in-out infinite; }
+    /* Toast deslizante */
+    #toast-notification:not(.hidden) { animation: pop-in .25s cubic-bezier(.22,.8,.32,1) both; }
+    /* Respeta movimiento reducido */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
 
-    /* Subtle custom scrollbar */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: #090d16; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
+    /* ========== INTERACTIVOS LOCALES v2 (del laboratorio) ========== */
+    /* Indicador "escribiendo" — 3 puntos CSS puro */
+    .typing-dots { display: inline-flex; gap: .3rem; align-items: center; padding: .6rem .9rem; }
+    .typing-dots span {
+      width: .5rem; height: .5rem; border-radius: 50%; background: var(--teal);
+      animation: typing-bounce 1.2s infinite ease-in-out;
     }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+    .typing-dots span:nth-child(2) { animation-delay: .15s; }
+    .typing-dots span:nth-child(3) { animation-delay: .3s; }
+    @keyframes typing-bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: .5; }
+      30% { transform: translateY(-.35rem); opacity: 1; }
     }
-    .pb-safe {
-      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    /* Reveals por scroll — progresivo, fail-open */
+    @supports (animation-timeline: view()) {
+      .reveal-scroll {
+        animation: rise-in .6s cubic-bezier(.22,.8,.32,1) both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 35%;
+      }
     }
+    /* Caret del typewriter */
+    .typewriter-caret { display: inline-block; width: 2px; height: 1.1em; background: var(--terracotta);
+      margin-left: 2px; vertical-align: text-bottom; animation: caret-blink 1s steps(1) infinite; }
+    @keyframes caret-blink { 50% { opacity: 0; } }
+    /* Spinner SVG inline */
+    .spinner-svg { width: 2.2rem; height: 2.2rem; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Acordeón suave con <details> */
+    details.accordion { border: 1px solid var(--border); border-radius: 1rem; background: var(--card); overflow: hidden; }
+    details.accordion summary { cursor: pointer; padding: .9rem 1.1rem; font-weight: 600; list-style: none;
+      display: flex; align-items: center; justify-content: space-between; }
+    details.accordion summary::-webkit-details-marker { display: none; }
+    details.accordion summary .chev { transition: transform .25s ease; color: var(--teal); }
+    details.accordion[open] summary .chev { transform: rotate(180deg); }
+    details.accordion .acc-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+    details.accordion[open] .acc-body { grid-template-rows: 1fr; }
+    details.accordion .acc-inner { overflow: hidden; }
   </style>
 </head>
-<body class="w-full max-w-full min-h-screen overflow-x-hidden bg-slate-950 text-slate-100 flex flex-col antialiased">
+<body data-theme="consultorio">
 
-  <!-- TOP APP BAR -->
-  <header class="h-14 bg-slate-900/95 border-b border-slate-800 flex items-center justify-between px-3 sm:px-6 flex-shrink-0 z-30 sticky top-0 backdrop-blur-md">
-    <div class="flex items-center space-x-3">
-      <!-- Mobile Drawer Hamburger Toggle Button -->
-      <button id="btnToggleMobileDrawer" onclick="toggleMobileDrawer()" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none transition" aria-label="Abrir Menú de Navegación">
-        <i class="fa-solid fa-bars text-lg"></i>
-      </button>
+  <!-- Drawer móvil original: conservado para compatibilidad con el JS, oculto permanentemente
+       (la navegación móvil usa la barra inferior). -->
+  <div id="drawerBackdrop" onclick="closeMobileDrawer()" aria-hidden="true"></div>
+  <aside id="mobileDrawer" aria-hidden="true">
+    <button onclick="switchTabAndCloseDrawer('evaluador')">Evaluador</button>
+    <button onclick="switchTabAndCloseDrawer('chat')" id="tab-btn-consultor-mobile">Consultor</button>
+    <button onclick="switchTabAndCloseDrawer('biblioteca')">Biblioteca</button>
+    <button onclick="switchTabAndCloseDrawer('cascada')">Cascada</button>
+    <button onclick="switchTabAndCloseDrawer('evidencia')">Evidencia</button>
+    <button onclick="switchTabAndCloseDrawer('guia')">Manual</button>
+    <span id="drawerStatusText">Listo</span>
+  </aside>
 
-      <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-blue-700 via-indigo-600 to-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/25 flex-shrink-0">
-        <i class="fa-solid fa-compass text-white text-base"></i>
-      </div>
-      <div class="py-1">
-        <h1 class="font-bold text-sm sm:text-base tracking-tight bg-gradient-to-r from-blue-400 via-indigo-200 to-emerald-400 bg-clip-text text-transparent leading-normal py-1">
-          Asesor Psicopedagógico
-        </h1>
-        <p class="text-[10px] text-slate-400 hidden sm:block">Triaje de Dependencia Cognitiva y Consultoría Docente con IA</p>
+  <!-- CABECERA SUPERIOR -->
+  <header class="app-header">
+    <button id="btnToggleMobileDrawer" onclick="toggleMobileDrawer()" class="icon-btn header-drawer-toggle" aria-label="Abrir menú de navegación">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"><i class="fa-solid fa-compass"></i></div>
+      <div>
+        <h1 class="brand-title">Asesor Psicopedagógico</h1>
+        <p class="brand-sub">Triaje de dependencia cognitiva · Consultoría docente con IA</p>
       </div>
     </div>
-
-    <!-- Right Header Actions -->
-    <div class="flex items-center space-x-2 sm:space-x-3">
-      <!-- Active Cascade Status Badge -->
-      <div id="cascadeStatusBadge" class="hidden sm:flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-800/80 border border-slate-700 text-slate-300">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-1.5"></span>
-        <span id="cascadeStatusText" class="truncate max-w-[140px] md:max-w-[190px]">Cascada: Lista</span>
+    <div class="header-actions">
+      <div id="cascadeStatusBadge" class="cascade-badge" role="status">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span id="cascadeStatusText">Cascada: Lista</span>
       </div>
-
-      <!-- API Key Button -->
-      <button onclick="openApiKeyModal()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
-        <i class="fa-solid fa-key text-amber-400"></i>
+      <button onclick="openApiKeyModal()" class="btn btn-outline btn-sm">
+        <i class="fa-solid fa-key" style="color:var(--terracotta)" aria-hidden="true"></i>
         <span id="apiKeyBtnText">Configurar API Key</span>
       </button>
     </div>
   </header>
 
-  <!-- MOBILE SLIDING DRAWER & BACKDROP -->
-  <div id="drawerBackdrop" onclick="closeMobileDrawer()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 hidden transition-opacity duration-300"></div>
-  <aside id="mobileDrawer" class="fixed top-0 left-0 bottom-0 w-72 max-w-[80vw] bg-slate-900 border-r border-slate-800 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-2xl md:hidden">
-    <div class="p-4 border-b border-slate-800 flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-          <i class="fa-solid fa-compass"></i>
-        </div>
-        <span class="font-bold text-sm text-white">Navegación</span>
-      </div>
-      <button onclick="closeMobileDrawer()" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800">
-        <i class="fa-solid fa-xmark text-base"></i>
-      </button>
-    </div>
-
-    <!-- Mobile Drawer Nav Links -->
-    <nav class="flex-1 overflow-y-auto p-3 space-y-1.5 text-xs font-medium">
-      <button onclick="switchTabAndCloseDrawer('evaluador')" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
-        <i class="fa-solid fa-stethoscope text-blue-400 w-5"></i>
-        <span>Evaluador Clínico</span>
-      </button>
-      <button onclick="switchTabAndCloseDrawer('chat')" data-tab="consultor" id="tab-btn-consultor-mobile" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
-        <i class="fa-solid fa-comments text-indigo-400 w-5"></i>
-        <span>Consultor en Vivo</span>
-      </button>
-      <button onclick="switchTabAndCloseDrawer('biblioteca')" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
-        <i class="fa-solid fa-book-bookmark text-emerald-400 w-5"></i>
-        <span>Biblioteca Fricción</span>
-      </button>
-      <button onclick="switchTabAndCloseDrawer('cascada')" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
-        <i class="fa-solid fa-layer-group text-amber-400 w-5"></i>
-        <span>Motor en Cascada</span>
-      </button>
-      <button onclick="switchTabAndCloseDrawer('evidencia')" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
-        <i class="fa-solid fa-graduation-cap text-purple-400 w-5"></i>
-        <span>Evidencia (28 Papers)</span>
-      </button>
-      <button onclick="switchTabAndCloseDrawer('guia')" class="drawer-btn w-full text-left px-3 py-2.5 rounded-lg flex items-center space-x-2.5 text-slate-200 hover:bg-slate-800 transition">
-        <i class="fa-solid fa-book-open text-sky-400 w-5"></i>
-        <span>Manual de Uso</span>
-      </button>
-    </nav>
-
-    <!-- Mobile Drawer Footer -->
-    <div class="p-3 border-t border-slate-800 text-[11px] text-slate-400 space-y-2">
-      <div class="flex items-center justify-between">
-        <span>Estado Motor:</span>
-        <span id="drawerStatusText" class="text-emerald-400 font-semibold">Listo</span>
-      </div>
-      <button onclick="openApiKeyModal(); closeMobileDrawer();" class="w-full py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-center text-xs font-medium transition">
-        <i class="fa-solid fa-key text-amber-400 mr-1"></i> Gestionar API Key
-      </button>
-    </div>
-  </aside>
-
-  <!-- DESKTOP / HORIZONTAL NAVIGATION BAR -->
-  <nav class="bg-slate-900 border-b border-slate-800 hidden md:flex items-center px-4 sm:px-6 overflow-x-auto flex-shrink-0 z-20">
-    <div class="flex space-x-1 py-1.5 min-w-max text-xs font-medium">
-      <button onclick="switchTab('evaluador')" id="tab-evaluador" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition bg-blue-600 text-white shadow-sm">
-        <i class="fa-solid fa-stethoscope"></i>
-        <span>Evaluador Clínico</span>
-      </button>
-      <button onclick="switchTab('chat')" id="tab-chat" data-tab="consultor" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800">
-        <i class="fa-solid fa-comments"></i>
-        <span>Consultor en Vivo</span>
-      </button>
-      <button onclick="switchTab('biblioteca')" id="tab-biblioteca" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800">
-        <i class="fa-solid fa-book-bookmark"></i>
-        <span>Biblioteca Fricción</span>
-      </button>
-      <button onclick="switchTab('cascada')" id="tab-cascada" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800">
-        <i class="fa-solid fa-layer-group"></i>
-        <span>Motor en Cascada</span>
-      </button>
-      <button onclick="switchTab('evidencia')" id="tab-evidencia" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800">
-        <i class="fa-solid fa-graduation-cap"></i>
-        <span>Evidencia (28 Papers)</span>
-      </button>
-      <button onclick="switchTab('guia')" id="tab-guia" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center space-x-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800">
-        <i class="fa-solid fa-book-open"></i>
-        <span>Manual de Uso</span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- MAIN SCROLLABLE CONTENT VIEWPORT -->
-  <main class="flex-1 w-full max-w-full overflow-y-auto relative flex flex-col bg-slate-950">
-
-    <!-- 1. TAB: EVALUADOR CLÍNICO-PEDAGÓGICO DUAL -->
-    <section id="view-evaluador" class="w-full max-w-6xl mx-auto p-3 sm:p-6 space-y-6">
-      
-      <!-- Welcome Banner -->
-      <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-950/70 via-slate-900 to-indigo-950/70 border border-blue-900/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 shadow-xl">
-        <div class="space-y-1">
-          <div class="flex items-center gap-2">
-            <span class="px-2.5 py-0.5 rounded-full bg-blue-900/80 text-blue-300 text-xs font-semibold border border-blue-700/50">
-              <i class="fa-solid fa-stethoscope mr-1"></i> Triaje Psicopedagógico Dual
-            </span>
-            <span class="text-xs text-slate-400 hidden sm:inline">Consensus Grounding: 28 Papers</span>
-          </div>
-          <h2 class="text-lg sm:text-xl font-bold text-white tracking-tight">
-            Diagnóstico de Dependencia Cognitiva y Pérdida de Soberanía Epistémica
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-300 max-w-2xl">
-            Evalúa y calibra intervenciones pedagógicas basadas en evidencia, tanto para alumnos individuales como para climas y dinámicas de aulas completas.
-          </p>
-        </div>
-
-        <div class="flex items-center gap-2 self-end md:self-auto">
-          <span class="text-xs px-2.5 py-1 rounded bg-slate-800 text-emerald-400 border border-slate-700 flex items-center gap-1.5">
-            <i class="fa-solid fa-brain"></i>
-            <span>Razonamiento 4096t</span>
-          </span>
+  <div class="app-shell">
+    <!-- BARRA LATERAL (escritorio) -->
+    <aside class="sidebar" aria-label="Navegación principal">
+      <nav class="sidebar-nav">
+        <p class="sidebar-nav-label">Consultorio</p>
+        <button onclick="switchTab('evaluador')" id="tab-evaluador" class="nav-tab nav-item">
+          <i class="fa-solid fa-stethoscope" aria-hidden="true"></i><span>Evaluador Clínico</span>
+        </button>
+        <button onclick="switchTab('chat')" id="tab-chat" data-tab="consultor" class="nav-tab nav-item">
+          <i class="fa-solid fa-comments" aria-hidden="true"></i><span>Consultor en Vivo</span>
+        </button>
+        <button onclick="switchTab('biblioteca')" id="tab-biblioteca" class="nav-tab nav-item">
+          <i class="fa-solid fa-book-bookmark" aria-hidden="true"></i><span>Biblioteca Fricción</span>
+        </button>
+        <button onclick="switchTab('cascada')" id="tab-cascada" class="nav-tab nav-item">
+          <i class="fa-solid fa-layer-group" aria-hidden="true"></i><span>Motor en Cascada</span>
+        </button>
+        <button onclick="switchTab('evidencia')" id="tab-evidencia" class="nav-tab nav-item">
+          <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i><span>Evidencia · 28 papers</span>
+        </button>
+        <button onclick="switchTab('guia')" id="tab-guia" class="nav-tab nav-item">
+          <i class="fa-solid fa-book-open" aria-hidden="true"></i><span>Manual de Uso</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="engine-card">
+          <span class="engine-label">Estado del motor</span>
+          <span class="engine-status"><span class="pulse-dot" aria-hidden="true"></span>Listo</span>
         </div>
       </div>
+    </aside>
 
-      <!-- Scope Selector (Individual vs. Group) -->
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-2 flex flex-col sm:flex-row gap-2 items-center justify-between shadow-md">
-        <span class="text-xs font-semibold text-slate-400 px-2 flex items-center gap-1.5">
-          <i class="fa-solid fa-sliders text-blue-400"></i> Alcance de la Evaluación:
-        </span>
-        <div class="grid grid-cols-2 gap-2 w-full sm:w-auto">
-          <button type="button" id="scopeBtnIndividual" onclick="setEvaluationScope('individual')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 bg-blue-600 text-white shadow-sm">
-            <i class="fa-solid fa-user"></i>
-            <span>👤 Caso Individual</span>
-          </button>
-          <button type="button" id="scopeBtnGroup" onclick="setEvaluationScope('group')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300">
-            <i class="fa-solid fa-users"></i>
-            <span>👥 Grupo / Aula Completa</span>
-          </button>
-        </div>
-      </div>
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="app-main">
 
-      <!-- Two Column Layout: Form & Results -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
-        <!-- LEFT: Input Form (5 cols) -->
-        <div class="lg:col-span-5 bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
-            <h3 class="font-semibold text-xs sm:text-sm text-slate-200 uppercase tracking-wider flex items-center gap-2">
-              <i class="fa-solid fa-clipboard-list text-blue-400"></i>
-              <span id="formScopeTitle">Parámetros del Caso Individual</span>
-            </h3>
-            <span id="scopeBadge" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800">
-              Individual
-            </span>
-          </div>
-
-          <!-- Selectors: Academic Area & Context -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Área Académica</label>
-              <select id="evalArea" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
-                <option value="Ciencias Técnicas e Ingeniería (Cálculo, Programación, Circuitos, Mecánica, Datos)">Ciencias Técnicas / Ingeniería</option>
-                <option value="Ciencias Sociales y Humanidades (Derecho, Sociología, Historia, Filosofía)">Ciencias Sociales / Humanidades</option>
-                <option value="Ciencias de la Salud (Medicina, Enfermería, Psicología Clínica)">Ciencias de la Salud</option>
-                <option value="Ciencias Económicas y Administrativas (Finanzas, Gestión, Negocios)">Ciencias Económicas / Negocios</option>
-                <option value="Educación y Formación Pedagógica">Educación / Pedagogía</option>
-                <option value="Otras Áreas / Multidisciplinar">Otras Disciplinas</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Contexto Material</label>
-              <select id="evalContexto" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
-                <option value="Presencial con conectividad de alta velocidad y dispositivos propios">Presencial (Conexión Alta)</option>
-                <option value="Semipresencial con contingencias (apagones, cortes, desconexión intermitente)">Semipresencial (Cortes / Apagones)</option>
-                <option value="100% Virtual / Remoto asíncrono">100% Remoto / Asíncrono</option>
-                <option value="Taller o Laboratorio Supervisado sin dispositivos personales">Laboratorio Supervisado</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Dynamic Warning Checklist Container -->
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <label class="block text-xs font-semibold text-amber-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <span id="checklistHeader">Indicadores Observables de Alerta:</span>
-              </label>
-              <span class="text-[10px] text-slate-500">Marcar los detectados</span>
-            </div>
-
-            <div id="dynamicChecklistContainer" class="space-y-2 text-xs text-slate-300 bg-slate-950/70 p-3 rounded-xl border border-slate-800/80 max-h-60 overflow-y-auto">
-              <!-- Checklist injected dynamically by setEvaluationScope() -->
-            </div>
-          </div>
-
-          <!-- Free Description -->
+      <!-- 1. EVALUADOR CLÍNICO-PEDAGÓGICO DUAL -->
+      <section id="view-evaluador" data-anim="rise" class="view" aria-label="Evaluador clínico">
+        <div class="welcome-banner">
           <div>
-            <div class="flex items-center justify-between mb-1">
-              <label id="lblDescripcion" class="block text-xs font-medium text-slate-300">
-                Descripción Detallada del Caso / Evidencia Observada
-              </label>
-              <span class="text-[10px] text-slate-500">Opcional pero recomendado</span>
-            </div>
-            <textarea id="evalDescripcion" rows="3" placeholder="Ej: Entregas impecables pero en clase no logran justificar las decisiones de diseño ni modificar parámetros en vivo..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 resize-y"></textarea>
+            <span class="badge badge-teal"><i class="fa-solid fa-stethoscope" aria-hidden="true"></i>Triaje Psicopedagógico Dual</span>
+            <h2>Diagnóstico de dependencia cognitiva y soberanía epistémica</h2>
+            <p>Evalúa y calibra intervenciones pedagógicas basadas en evidencia, tanto para alumnos individuales como para climas y dinámicas de aulas completas.</p>
           </div>
+          <span class="badge"><i class="fa-solid fa-brain" style="color:var(--teal)" aria-hidden="true"></i>Razonamiento 4096t</span>
+        </div>
 
-          <!-- Multiformat File Attachment (+) -->
-          <div class="space-y-2 border-t border-slate-800/80 pt-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-slate-300 flex items-center gap-1.5">
-                <i class="fa-solid fa-paperclip text-blue-400"></i>
-                <span>Adjuntar Evidencia Multiformato (+)</span>
-              </span>
-              <label class="cursor-pointer px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-blue-400 border border-slate-700 flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-plus"></i>
-                <span>Subir Archivos</span>
+        <div style="height:1rem"></div>
+
+        <!-- Selector de alcance -->
+        <div class="card scope-card">
+          <span class="section-label" style="margin:0"><i class="fa-solid fa-sliders" style="color:var(--teal)" aria-hidden="true"></i>&nbsp;Alcance de la evaluación</span>
+          <div class="scope-buttons" role="group" aria-label="Alcance de la evaluación">
+            <button type="button" id="scopeBtnIndividual" onclick="setEvaluationScope('individual')" class="btn btn-primary">
+              <i class="fa-solid fa-user" aria-hidden="true"></i><span>Caso individual</span>
+            </button>
+            <button type="button" id="scopeBtnGroup" onclick="setEvaluationScope('group')" class="btn btn-outline">
+              <i class="fa-solid fa-users" aria-hidden="true"></i><span>Grupo / Aula</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="height:1rem"></div>
+
+        <div style="display:grid;grid-template-columns:1fr;gap:1rem;align-items:start" class="eval-grid">
+          <!-- Formulario -->
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:1rem">
+              <h3 class="card-title" style="margin:0"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i><span id="formScopeTitle">Parámetros del caso individual</span></h3>
+              <span id="scopeBadge" class="badge badge-teal">Individual</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr;gap:.8rem" class="eval-selects">
+              <div class="field" style="margin:0">
+                <label class="field-label" for="evalArea">Área académica</label>
+                <select id="evalArea" class="input">
+                  <option value="Ciencias Técnicas e Ingeniería (Cálculo, Programación, Circuitos, Mecánica, Datos)">Ciencias Técnicas / Ingeniería</option>
+                  <option value="Ciencias Sociales y Humanidades (Derecho, Sociología, Historia, Filosofía)">Ciencias Sociales / Humanidades</option>
+                  <option value="Ciencias de la Salud (Medicina, Enfermería, Psicología Clínica)">Ciencias de la Salud</option>
+                  <option value="Ciencias Económicas y Administrativas (Finanzas, Gestión, Negocios)">Ciencias Económicas / Negocios</option>
+                  <option value="Educación y Formación Pedagógica">Educación / Pedagogía</option>
+                  <option value="Otras Áreas / Multidisciplinar">Otras Disciplinas</option>
+                </select>
+              </div>
+              <div class="field" style="margin:0">
+                <label class="field-label" for="evalContexto">Contexto material</label>
+                <select id="evalContexto" class="input">
+                  <option value="Presencial con conectividad de alta velocidad y dispositivos propios">Presencial (Conexión Alta)</option>
+                  <option value="Semipresencial con contingencias (apagones, cortes, desconexión intermitente)">Semipresencial (Cortes / Apagones)</option>
+                  <option value="100% Virtual / Remoto asíncrono">100% Remoto / Asíncrono</option>
+                  <option value="Taller o Laboratorio Supervisado sin dispositivos personales">Laboratorio Supervisado</option>
+                </select>
+              </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="field">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem">
+                <label class="field-label" style="margin:0;color:var(--terracotta-deep)"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>&nbsp;<span id="checklistHeader">Indicadores observables de alerta</span></label>
+                <span style="font-size:.68rem;color:var(--ink-faint)">Marcar los detectados</span>
+              </div>
+              <div id="dynamicChecklistContainer" role="group" aria-label="Indicadores observables"><!-- Inyectado por JS --></div>
+            </div>
+
+            <div class="field">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem">
+                <label id="lblDescripcion" class="field-label" for="evalDescripcion" style="margin:0">Descripción detallada del caso / Evidencia observada</label>
+                <span style="font-size:.68rem;color:var(--ink-faint)">Opcional pero recomendado</span>
+              </div>
+              <textarea id="evalDescripcion" rows="3" placeholder="Ej: Entregas impecables pero en clase no logran justificar las decisiones de diseño ni modificar parámetros en vivo..." class="input"></textarea>
+            </div>
+
+            <div class="field">
+              <span class="field-label"><i class="fa-solid fa-paperclip" style="color:var(--teal)" aria-hidden="true"></i>&nbsp;Adjuntar evidencia multiformato</span>
+              <p class="field-hint" style="margin:0 0 .5rem">Soporta: PDF, Word (.docx), Excel (.xlsx/.csv), imágenes (JPG/PNG).</p>
+              <label class="btn btn-outline btn-sm" style="cursor:pointer">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i><span>Subir archivos</span>
                 <input type="file" id="evalFileInput" onchange="handleEvalFile(event)" class="hidden" accept=".pdf,.docx,.doc,.xlsx,.xls,.csv,.txt,.jpg,.jpeg,.png" multiple>
               </label>
-            </div>
-            <p class="text-[10px] text-slate-500">Soporta: PDF, Word (.docx), Excel (.xlsx/.csv), Imágenes (JPG/PNG), Tesis o Código.</p>
-
-            <!-- File Processing Progress Bar (Animated) -->
-            <div id="evalFileProgressBar" class="hidden w-full bg-slate-800 rounded-full h-1.5 overflow-hidden my-2">
-              <div class="bg-gradient-to-r from-blue-500 via-indigo-400 to-emerald-400 h-full w-full animate-pulse"></div>
+              <div id="evalFileProgressBar" class="hidden" style="margin-top:.6rem"><div class="progress-track"><div class="progress-fill"></div></div></div>
+              <div id="evalFilesPreview" class="hidden files-preview" style="margin-top:.6rem"></div>
             </div>
 
-            <!-- Attachment Preview Container (Multi-file) -->
-            <div id="evalFilesPreview" class="hidden flex flex-wrap gap-2 pt-1"></div>
+            <button id="btnEjecutarTriaje" type="button" onclick="ejecutarTriaje()" class="btn btn-primary" style="width:100%;margin-top:.4rem">
+              <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+              <span id="btnEjecutarText">Generar diagnóstico e intervención</span>
+            </button>
           </div>
 
-          <!-- Action Button -->
-          <button id="btnEjecutarTriaje" type="button" onclick="ejecutarTriaje()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 transition active:scale-[0.99]">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-            <span id="btnEjecutarText">Generar Diagnóstico e Intervención</span>
-          </button>
-        </div>
-
-        <!-- RIGHT: Diagnosis Results (7 cols) -->
-        <div class="lg:col-span-7 space-y-4">
-          
-          <!-- Loading State Indicator -->
-          <div id="evalLoading" class="hidden bg-slate-900/90 border border-slate-800 rounded-2xl p-8 text-center space-y-4 shadow-xl animate-pulse">
-            <div class="w-12 h-12 mx-auto rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
-              <i class="fa-solid fa-circle-notch fa-spin text-2xl"></i>
+          <!-- Resultados -->
+          <div>
+            <div id="evalLoading" class="hidden card state-card" role="status" aria-live="polite">
+              <div class="state-icon loading"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i></div>
+              <h4>Consultando motor en cascada…</h4>
+              <p id="evalLoadingSubtext">Analizando patrones psicopedagógicos, calibrando fricción metacognitiva y citas de Consensus…</p>
             </div>
-            <div>
-              <h4 class="font-bold text-slate-200 text-sm sm:text-base">Consultando Motor en Cascada con Razonamiento...</h4>
-              <p id="evalLoadingSubtext" class="text-xs text-slate-400 mt-1">
-                Analizando patrones psicopedagógicos, calibrando fricción metacognitiva y citas de Consensus...
-              </p>
-            </div>
-          </div>
 
-          <!-- Results Container -->
-          <div id="evalResultContainer" class="hidden space-y-4">
-            
-            <!-- Result Top Banner & Actions -->
-            <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs shadow-md">
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                <span class="text-slate-200 font-semibold" id="resultHeaderLabel">Dictamen Psicopedagógico Generado</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span id="evalModelBadge" class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800 font-mono text-[11px]">
-                  Gemini Frontier
+            <div id="evalResultContainer" class="hidden result-stack">
+              <div class="card result-banner">
+                <span style="display:flex;align-items:center;gap:.5rem;font-weight:600;font-size:.84rem"><span class="ok-dot" aria-hidden="true"></span><span id="resultHeaderLabel">Dictamen psicopedagógico generado</span></span>
+                <span style="display:flex;align-items:center;gap:.5rem">
+                  <span id="evalModelBadge" class="badge badge-teal font-mono2">Gemini Frontier</span>
+                  <button onclick="copiarDictamen(this)" class="btn btn-outline btn-sm" title="Copiar informe al portapapeles"><i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copiar</span></button>
                 </span>
-                <button onclick="copiarDictamen(this)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition" title="Copiar informe al portapapeles">
-                  <i class="fa-regular fa-copy mr-1"></i><span>Copiar</span>
-                </button>
               </div>
-            </div>
 
-            <!-- The 4 Blocks of Diagnosis (Rendered with marked + DOMPurify) -->
-            <div id="diagnostic-result-content" class="space-y-3.5">
-              <!-- Block 1 -->
-              <div class="bg-slate-900/95 border-l-4 border-blue-500 border-t border-r border-b border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg">
-                <div class="flex items-center gap-2 mb-2 text-blue-400 font-bold text-sm">
-                  <i class="fa-solid fa-chart-pie"></i>
-                  <h4 id="block1Title">1. Diagnóstico Clínico-Educativo</h4>
+              <div id="diagnostic-result-content" style="display:flex;flex-direction:column;gap:1rem">
+                <div class="card diag-block">
+                  <h4><i class="fa-solid fa-chart-pie" style="color:var(--teal)" aria-hidden="true"></i><span id="block1Title">1. Diagnóstico clínico-educativo</span></h4>
+                  <div id="resBloque1" class="prose-markdown"></div>
                 </div>
-                <div id="resBloque1" class="prose prose-invert max-w-none text-xs sm:text-sm text-slate-200 leading-relaxed break-words prose-markdown"></div>
-              </div>
-
-              <!-- Block 2 -->
-              <div class="bg-slate-900/95 border-l-4 border-amber-500 border-t border-r border-b border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg">
-                <div class="flex items-center gap-2 mb-2 text-amber-400 font-bold text-sm">
-                  <i class="fa-solid fa-microscope"></i>
-                  <h4 id="block2Title">2. Mecanismo Psicológico Subyacente (Citas APA)</h4>
+                <div class="card diag-block accent-amber">
+                  <h4><i class="fa-solid fa-microscope" style="color:var(--terracotta)" aria-hidden="true"></i><span id="block2Title">2. Mecanismo psicológico subyacente (citas APA)</span></h4>
+                  <div id="resBloque2" class="prose-markdown"></div>
                 </div>
-                <div id="resBloque2" class="prose prose-invert max-w-none text-xs sm:text-sm text-slate-200 leading-relaxed break-words prose-markdown"></div>
-              </div>
-
-              <!-- Block 3 -->
-              <div class="bg-slate-900/95 border-l-4 border-emerald-500 border-t border-r border-b border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg">
-                <div class="flex items-center gap-2 mb-2 text-emerald-400 font-bold text-sm">
-                  <i class="fa-solid fa-person-chalkboard"></i>
-                  <h4 id="block3Title">3. Estrategias de Fricción Metacognitiva</h4>
+                <div class="card diag-block accent-green">
+                  <h4><i class="fa-solid fa-person-chalkboard" style="color:#2F7D4F" aria-hidden="true"></i><span id="block3Title">3. Estrategias de fricción metacognitiva</span></h4>
+                  <div id="resBloque3" class="prose-markdown"></div>
                 </div>
-                <div id="resBloque3" class="prose prose-invert max-w-none text-xs sm:text-sm text-slate-200 leading-relaxed break-words prose-markdown"></div>
-              </div>
-
-              <!-- Block 4 -->
-              <div class="bg-slate-900/95 border-l-4 border-indigo-500 border-t border-r border-b border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg">
-                <div class="flex items-center gap-2 mb-2 text-indigo-400 font-bold text-sm">
-                  <i class="fa-solid fa-hand-holding-heart"></i>
-                  <h4 id="block4Title">4. Contención Afectiva y Soberanía Epistémica</h4>
+                <div class="card diag-block accent-indigo">
+                  <h4><i class="fa-solid fa-hand-holding-heart" style="color:#6B5CA5" aria-hidden="true"></i><span id="block4Title">4. Contención afectiva y soberanía epistémica</span></h4>
+                  <div id="resBloque4" class="prose-markdown"></div>
                 </div>
-                <div id="resBloque4" class="prose prose-invert max-w-none text-xs sm:text-sm text-slate-200 leading-relaxed break-words prose-markdown"></div>
+              </div>
+
+              <div class="card continuity-card">
+                <div>
+                  <p style="font-size:.82rem;font-weight:700;margin:0 0 .25rem;display:flex;align-items:center;gap:.45rem"><i class="fa-solid fa-arrow-right-arrow-left" style="color:var(--teal)" aria-hidden="true"></i>Flujo bidireccional de consultoría</p>
+                  <p style="font-size:.76rem;color:var(--ink-soft);margin:0;line-height:1.55">Transfiere este caso completo al Consultor en Vivo para crear rúbricas, simular preguntas de examen oral o ajustar consignas.</p>
+                </div>
+                <button type="button" id="btn-continuar-consultor" onclick="window.transferirCasoAConsultor()" class="btn btn-terracotta"><i class="fa-solid fa-comments" aria-hidden="true"></i><span>Continuar en el Consultor en Vivo</span></button>
               </div>
             </div>
 
-            <!-- MANDATORY BIDIRECTIONAL CONTINUITY BUTTON -->
-            <div class="p-4 bg-gradient-to-r from-blue-950/80 via-slate-900 to-indigo-950/80 border border-blue-800/60 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xl">
-              <div class="space-y-0.5 text-center sm:text-left">
-                <p class="text-xs font-bold text-white flex items-center justify-center sm:justify-start gap-1.5">
-                  <i class="fa-solid fa-arrow-right-arrow-left text-blue-400"></i> Flujo Bidireccional de Consultoría
-                </p>
-                <p class="text-[11px] text-slate-300">
-                  Transfiere este caso completo al Consultor en Vivo para crear rúbricas específicas, simular preguntas de examen oral o ajustar consignas.
-                </p>
+            <div id="evalErrorState" class="hidden card state-card" role="alert">
+              <div class="state-icon error"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></div>
+              <h4>No se pudo completar el diagnóstico</h4>
+              <p id="evalErrorMessage">Las peticiones en paralelo a los modelos Flash no obtuvieron respuesta válida o se detectó saturación en la red.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:1rem">
+                <button type="button" onclick="ejecutarTriaje()" class="btn btn-primary btn-sm"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i><span>Reintentar consulta</span></button>
+                <button type="button" onclick="showDiagnosticReportModal()" class="btn btn-outline btn-sm"><span>Ver informe detallado</span></button>
               </div>
-              <button type="button" id="btn-continuar-consultor" onclick="window.transferirCasoAConsultor()" class="w-full sm:w-auto py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95">💬 Continuar y Profundizar en el Consultor en Vivo</button>
             </div>
 
-          </div>
-
-          <!-- Error State with Retry Button -->
-          <div id="evalErrorState" class="hidden bg-red-950/30 border border-red-800/80 rounded-2xl p-6 sm:p-8 text-center space-y-3">
-            <div class="w-12 h-12 mx-auto rounded-full bg-red-900/50 border border-red-700 flex items-center justify-center text-red-400">
-              <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-            </div>
-            <h4 class="font-semibold text-red-200 text-sm sm:text-base">No se pudo completar el diagnóstico</h4>
-            <p id="evalErrorMessage" class="text-xs text-red-300/80 max-w-md mx-auto">
-              Las peticiones en paralelo a los modelos Flash no obtuvieron respuesta válida o se detectó saturación en la red.
-            </p>
-            <div class="pt-2 flex flex-wrap items-center justify-center gap-2">
-              <button type="button" onclick="ejecutarTriaje()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition shadow-lg inline-flex items-center gap-1.5 active:scale-95">
-                <i class="fa-solid fa-rotate-right"></i>
-                <span>🔄 Reintentar Consulta</span>
-              </button>
-              <button type="button" onclick="showDiagnosticReportModal()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs border border-slate-700 transition">
-                <span>Ver Informe Detallado</span>
-              </button>
+            <div id="evalEmptyState" class="card state-card">
+              <div class="state-icon idle"><i class="fa-solid fa-file-waveform" aria-hidden="true"></i></div>
+              <h4>Sin diagnóstico generado todavía</h4>
+              <p>Configure el alcance (individual o grupal), seleccione las señales observables y presione <strong>“Generar diagnóstico”</strong> para obtener el informe en 4 bloques.</p>
             </div>
           </div>
-
-          <!-- Empty State Placeholder -->
-          <div id="evalEmptyState" class="bg-slate-900/50 border border-dashed border-slate-800 rounded-2xl p-8 sm:p-12 text-center space-y-3">
-            <div class="w-14 h-14 mx-auto rounded-full bg-slate-800/80 flex items-center justify-center text-slate-500">
-              <i class="fa-solid fa-file-waveform text-2xl"></i>
-            </div>
-            <h4 class="font-semibold text-slate-300 text-sm sm:text-base">Sin diagnóstico generado todavía</h4>
-            <p class="text-xs text-slate-500 max-w-md mx-auto">
-              Configure el alcance (Individual o Grupal), seleccione las señales observables a la izquierda y presione <strong>"Generar Diagnóstico"</strong> para obtener el informe psicopedagógico en 4 bloques.
-            </p>
-          </div>
-
         </div>
+      </section>
 
-      </div>
-    </section>
-
-    <!-- 2. TAB: CONSULTOR PEDAGÓGICO EN VIVO (MULTI-SESSION & BIDIRECTIONAL CHAT) -->
-    <section id="view-chat" class="w-full h-[calc(100vh-4rem)] flex flex-col overflow-hidden bg-slate-950 box-border hidden relative">
-      <!-- Chat Header -->
-      <div class="h-12 bg-slate-900/90 border-b border-slate-800 px-3 sm:px-4 flex items-center justify-between flex-shrink-0 backdrop-blur-sm z-10">
-        <div class="flex items-center space-x-2 truncate">
-          <button onclick="toggleChatSidebar()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition shadow-sm" title="Historial de consultas">
-            <span>📁 Chats</span>
+      <!-- 2. CONSULTOR PEDAGÓGICO EN VIVO -->
+      <section id="view-chat" class="view view-chat hidden" style="position:relative" aria-label="Consultor en vivo">
+        <div class="chat-header">
+          <button onclick="toggleChatSidebar()" class="btn btn-outline btn-sm" title="Historial de consultas" aria-label="Abrir historial de consultas">
+            <i class="fa-solid fa-folder-open" aria-hidden="true"></i><span>Chats</span>
           </button>
-          <span id="currentChatTitle" class="font-semibold text-xs sm:text-sm text-slate-200 truncate max-w-[200px] sm:max-w-md">
-            Consulta Abierta
-          </span>
+          <span id="currentChatTitle" class="chat-title">Consulta abierta</span>
+          <span id="chatModelIndicator" class="model-chip">Cascada Flash Auto</span>
         </div>
-        <div class="flex items-center space-x-2">
-          <span id="chatModelIndicator" class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400 font-mono text-[10px]">
-            Cascada Flash Auto
-          </span>
-        </div>
-      </div>
 
-      <!-- Collapsible Chat History Sidebar (Hidden by default; overlays as absolute drawer when toggled) -->
-      <aside id="chatSidebar" class="hidden absolute z-30 inset-y-0 left-0 w-72 sm:w-80 bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0 shadow-2xl transition-all duration-300">
-        <!-- New Chat Button -->
-        <div class="p-3 border-b border-slate-800 flex items-center justify-between">
-          <span class="font-bold text-xs text-white flex items-center gap-2">
-            <i class="fa-solid fa-folder-open text-blue-400"></i>
-            <span>Historial de Consultas</span>
-          </span>
-          <button onclick="toggleChatSidebar()" class="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition" title="Cerrar panel">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-        <div class="p-3 border-b border-slate-800">
-          <button onclick="createNewChatSession(); toggleChatSidebar();" class="w-full py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center justify-center gap-2 transition shadow-sm">
-            <i class="fa-solid fa-plus"></i>
-            <span>Nueva Consulta</span>
-          </button>
-        </div>
-        <!-- Sessions List -->
-        <div class="flex-1 overflow-y-auto p-2 space-y-1" id="chatSessionsList">
-          <!-- Populated dynamically from localStorage -->
-        </div>
-        <!-- Sidebar Footer -->
-        <div class="p-3 border-t border-slate-800 text-[11px] text-slate-500 flex justify-between items-center">
-          <span class="flex items-center gap-1"><i class="fa-solid fa-database"></i> Sesiones Locales</span>
-          <button onclick="clearAllChatSessions()" class="text-red-400 hover:text-red-300 hover:underline">Borrar todo</button>
-        </div>
-      </aside>
-
-      <!-- Main Chat Area (Scrollable Messages) -->
-      <div id="chatMessagesContainer" class="flex-1 overflow-y-auto px-3 sm:px-6 py-4 space-y-4">
-        <!-- Messages populated dynamically -->
-      </div>
-
-      <!-- Chat File Processing Progress Bar (Animated) -->
-      <div id="chatFileProgressBar" class="hidden px-3 sm:px-4 py-1 bg-slate-900 border-t border-slate-800 flex-shrink-0">
-        <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-          <div class="bg-gradient-to-r from-blue-500 via-indigo-400 to-emerald-400 h-full w-full animate-pulse"></div>
-        </div>
-      </div>
-
-      <!-- Chat Attached Files Preview (Multi-file) -->
-      <div id="chatFilesPreview" class="hidden px-3 sm:px-4 py-1.5 bg-slate-900 border-t border-slate-800 flex flex-wrap gap-2 text-xs flex-shrink-0">
-        <!-- Rendered preview chips -->
-      </div>
-
-      <!-- Smart Suggestions Bar with Info Tooltips -->
-      <div class="flex-shrink-0 bg-slate-900/95 border-t border-slate-800">
-        <div class="flex gap-2 overflow-x-auto py-1 px-3 sm:px-4 no-scrollbar text-xs">
-          <span class="text-[11px] text-slate-400 font-medium whitespace-nowrap flex items-center gap-1 py-1">
-            <i class="fa-solid fa-lightbulb text-amber-400"></i> Sugerencias:
-          </span>
-          <div class="flex items-center bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-2.5 py-1 text-xs text-slate-200 whitespace-nowrap transition cursor-pointer flex-shrink-0">
-            <span onclick="insertSuggestion('Diseña una Rúbrica de Procesos (Draft-First) para evaluar el pensamiento crítico y la trazabilidad de borradores en una entrega final.')">Rúbrica de Procesos</span>
-            <button onclick="showTechniqueModal('rubrica')" class="ml-1.5 text-blue-400 hover:text-blue-300" title="Ver explicación de la técnica">
-              <i class="fa-solid fa-circle-info"></i>
-            </button>
+        <aside id="chatSidebar" class="chat-sidebar hidden" aria-label="Historial de consultas">
+          <div style="padding:.85rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-weight:700;font-size:.8rem;display:flex;align-items:center;gap:.5rem"><i class="fa-solid fa-folder-open" style="color:var(--teal)" aria-hidden="true"></i>Historial de consultas</span>
+            <button onclick="toggleChatSidebar()" class="icon-btn" style="width:36px;height:36px" title="Cerrar panel" aria-label="Cerrar historial"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
           </div>
-          <div class="flex items-center bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-2.5 py-1 text-xs text-slate-200 whitespace-nowrap transition cursor-pointer flex-shrink-0">
-            <span onclick="insertSuggestion('Genera una batería de 4 preguntas de Defensa Oral Socrática para comprobar si el estudiante comprende los fundamentos o hubo Cognitive Outsourcing.')">Defensa Oral Socrática</span>
-            <button onclick="showTechniqueModal('defensa')" class="ml-1.5 text-blue-400 hover:text-blue-300" title="Ver explicación de la técnica">
-              <i class="fa-solid fa-circle-info"></i>
-            </button>
+          <div style="padding:.85rem;border-bottom:1px solid var(--line)">
+            <button onclick="createNewChatSession(); toggleChatSidebar();" class="btn btn-primary btn-sm" style="width:100%"><i class="fa-solid fa-plus" aria-hidden="true"></i><span>Nueva consulta</span></button>
           </div>
-          <div class="flex items-center bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-2.5 py-1 text-xs text-slate-200 whitespace-nowrap transition cursor-pointer flex-shrink-0">
-            <span onclick="insertSuggestion('¿Cómo aplicar el protocolo de contención afectiva de Chan (2025) para reducir la culpa y ansiedad por IA en alumnos de alto rendimiento?')">Mitigación de Culpa (Chan 2025)</span>
-            <button onclick="showTechniqueModal('culpa')" class="ml-1.5 text-blue-400 hover:text-blue-300" title="Ver explicación de la técnica">
-              <i class="fa-solid fa-circle-info"></i>
-            </button>
+          <div id="chatSessionsList" style="flex:1;overflow-y:auto;padding:.5rem;display:flex;flex-direction:column;gap:.25rem"><!-- Sesiones --></div>
+          <div style="padding:.7rem .85rem;border-top:1px solid var(--line);font-size:.7rem;color:var(--ink-faint);display:flex;justify-content:space-between;align-items:center">
+            <span><i class="fa-solid fa-database" aria-hidden="true"></i>&nbsp;Sesiones locales</span>
+            <button onclick="clearAllChatSessions()" style="background:none;border:none;color:var(--danger);font-size:.7rem;cursor:pointer;padding:.4rem">Borrar todo</button>
           </div>
-          <div class="flex items-center bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-2.5 py-1 text-xs text-slate-200 whitespace-nowrap transition cursor-pointer flex-shrink-0">
-            <span onclick="insertSuggestion('Diseña un taller grupal de Auditoría de Alucinaciones donde los alumnos deban cazar y corregir errores conceptuales sutiles inyectados en respuestas de LLMs.')">Auditoría de Alucinaciones</span>
-            <button onclick="showTechniqueModal('auditoria')" class="ml-1.5 text-blue-400 hover:text-blue-300" title="Ver explicación de la técnica">
-              <i class="fa-solid fa-circle-info"></i>
-            </button>
-          </div>
-          <div class="flex items-center bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-2.5 py-1 text-xs text-slate-200 whitespace-nowrap transition cursor-pointer flex-shrink-0">
-            <span onclick="insertSuggestion('Propón una estrategia de Ingeniería Inversa en equipos para rediseñar una consigna propensa a resolución por ChatGPT.')">Ingeniería Inversa Grupal</span>
-            <button onclick="showTechniqueModal('inversa')" class="ml-1.5 text-blue-400 hover:text-blue-300" title="Ver explicación de la técnica">
-              <i class="fa-solid fa-circle-info"></i>
-            </button>
-          </div>
+        </aside>
+
+        <div id="chatMessagesContainer" class="chat-messages" role="log" aria-label="Mensajes de la consulta" aria-live="polite"><!-- Mensajes --></div>
+
+        <div id="chatFileProgressBar" class="hidden" style="padding:.4rem .9rem;background:var(--card);border-top:1px solid var(--line)"><div class="progress-track"><div class="progress-fill"></div></div></div>
+        <div id="chatFilesPreview" class="hidden files-preview chat-files-preview"></div>
+
+        <div class="chat-suggestions">
+          <span class="suggestion-label"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i>Sugerencias:</span>
+          <div class="suggestion-chip"><span onclick="insertSuggestion('Diseña una Rúbrica de Procesos (Draft-First) para evaluar el pensamiento crítico y la trazabilidad de borradores en una entrega final.')">Rúbrica de procesos</span><button onclick="showTechniqueModal('rubrica')" title="Ver explicación de la técnica" aria-label="Ver explicación: rúbrica de procesos"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button></div>
+          <div class="suggestion-chip"><span onclick="insertSuggestion('Genera una batería de 4 preguntas de Defensa Oral Socrática para comprobar si el estudiante comprende los fundamentos o hubo Cognitive Outsourcing.')">Defensa oral socrática</span><button onclick="showTechniqueModal('defensa')" title="Ver explicación de la técnica" aria-label="Ver explicación: defensa oral socrática"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button></div>
+          <div class="suggestion-chip"><span onclick="insertSuggestion('¿Cómo aplicar el protocolo de contención afectiva de Chan (2025) para reducir la culpa y ansiedad por IA en alumnos de alto rendimiento?')">Mitigación de culpa (Chan 2025)</span><button onclick="showTechniqueModal('culpa')" title="Ver explicación de la técnica" aria-label="Ver explicación: mitigación de culpa"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button></div>
+          <div class="suggestion-chip"><span onclick="insertSuggestion('Diseña un taller grupal de Auditoría de Alucinaciones donde los alumnos deban cazar y corregir errores conceptuales sutiles inyectados en respuestas de LLMs.')">Auditoría de alucinaciones</span><button onclick="showTechniqueModal('auditoria')" title="Ver explicación de la técnica" aria-label="Ver explicación: auditoría de alucinaciones"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button></div>
+          <div class="suggestion-chip"><span onclick="insertSuggestion('Propón una estrategia de Ingeniería Inversa en equipos para rediseñar una consigna propensa a resolución por ChatGPT.')">Ingeniería inversa grupal</span><button onclick="showTechniqueModal('inversa')" title="Ver explicación de la técnica" aria-label="Ver explicación: ingeniería inversa"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button></div>
         </div>
 
-        <!-- Chat Input Form -->
-        <div class="sticky bottom-0 w-full bg-slate-900 border-t border-slate-800 p-2 sm:p-3 z-20 pb-safe">
-          <div class="flex items-end gap-2">
-            <label class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 cursor-pointer transition flex items-center justify-center flex-shrink-0" title="Adjuntar documento o imagen (+)">
-              <i class="fa-solid fa-paperclip text-sm"></i>
-              <input type="file" id="chatFileInput" onchange="handleChatFile(event)" class="hidden" accept=".pdf,.docx,.doc,.xlsx,.xls,.csv,.txt,.jpg,.jpeg,.png" multiple>
-            </label>
-            <textarea id="chat-input-textarea" rows="1" onkeydown="handleChatKeydown(event)" placeholder="Escriba su consulta docente, pida consignas, rúbricas o seguimiento..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 resize-none max-h-36 overflow-y-auto"></textarea>
-            <button onclick="sendChatMessage()" id="btnSendChat" class="p-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition flex-shrink-0 shadow-md">
-              <span>Enviar</span>
-              <i class="fa-solid fa-paper-plane text-xs"></i>
-            </button>
-          </div>
+        <div class="chat-input-bar">
+          <label class="icon-btn" title="Adjuntar documento o imagen" aria-label="Adjuntar documento o imagen" style="cursor:pointer">
+            <i class="fa-solid fa-paperclip" aria-hidden="true"></i>
+            <input type="file" id="chatFileInput" onchange="handleChatFile(event)" class="hidden" accept=".pdf,.docx,.doc,.xlsx,.xls,.csv,.txt,.jpg,.jpeg,.png" multiple>
+          </label>
+          <textarea id="chat-input-textarea" rows="1" onkeydown="handleChatKeydown(event)" placeholder="Escriba su consulta docente: pida consignas, rúbricas o seguimiento…" class="input" style="flex:1;min-height:44px;max-height:9rem" aria-label="Escriba su consulta docente"></textarea>
+          <button onclick="sendChatMessage()" id="btnSendChat" class="btn btn-primary" aria-label="Enviar mensaje"><span>Enviar</span><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 3. TAB: BIBLIOTECA DE FRICCIÓN METACOGNITIVA -->
-    <section id="view-biblioteca" class="w-full max-w-5xl mx-auto p-3 sm:p-6 space-y-6 hidden">
-      <div class="border-b border-slate-800 pb-4">
-        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-book-bookmark text-emerald-400"></i> Plantillas de Fricción Metacognitiva Listas para el Aula
-        </h2>
-        <p class="text-xs sm:text-sm text-slate-400 mt-1">
-          Instrumentos didácticos para impedir la delegación pasiva y restaurar la soberanía del estudiante o equipo de trabajo.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Template 1 -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3 shadow-lg flex flex-col justify-between">
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 font-semibold">Protocolo Draft-First</span>
-              <span class="text-xs text-slate-500">Chen & Alibakhshi (2025)</span>
+      <!-- 3. BIBLIOTECA DE FRICCIÓN METACOGNITIVA -->
+      <section id="view-biblioteca" data-reveal class="view hidden" aria-label="Biblioteca de fricción">
+        <div class="view-head">
+          <h2 class="view-title"><i class="fa-solid fa-book-bookmark" aria-hidden="true"></i>Plantillas de fricción metacognitiva</h2>
+          <p class="view-lead">Instrumentos didácticos listos para el aula: impiden la delegación pasiva y restauran la soberanía del estudiante.</p>
+        </div>
+        <div class="template-grid">
+          <div class="card template-card">
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem">
+                <span class="badge badge-teal">Protocolo Draft-First</span>
+                <span style="font-size:.7rem;color:var(--ink-faint)">Chen &amp; Alibakhshi (2025)</span>
+              </div>
+              <h3 class="card-title">Matriz de borrador previo no digital</h3>
+              <p class="card-sub">Obliga al alumno a entregar un esquema conceptual o boceto manuscrito antes de interactuar con cualquier IA generativa.</p>
             </div>
-            <h3 class="font-bold text-slate-200 text-sm sm:text-base">Matriz de Borrador Previo No Digital</h3>
-            <p class="text-xs text-slate-400">Obliga al alumno a entregar un esquema conceptual o boceto manuscrito antes de permitirse interactuar con cualquier IA generativa.</p>
+            <button onclick="copiarTemplate('draftFirst', this)" class="btn btn-outline btn-sm" style="width:100%"><i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copiar plantilla</span></button>
           </div>
-          <button onclick="copiarTemplate('draftFirst', this)" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center justify-center gap-1.5 transition">
-            <i class="fa-regular fa-copy"></i> Copiar Plantilla al Portapapeles
-          </button>
-        </div>
-
-        <!-- Template 2 -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3 shadow-lg flex flex-col justify-between">
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs px-2.5 py-0.5 rounded-full bg-blue-950 text-blue-400 border border-blue-800 font-semibold">Evaluación de Procesos</span>
-              <span class="text-xs text-slate-500">Shen et al. (2026)</span>
+          <div class="card template-card">
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem">
+                <span class="badge badge-teal">Evaluación de procesos</span>
+                <span style="font-size:.7rem;color:var(--ink-faint)">Shen et al. (2026)</span>
+              </div>
+              <h3 class="card-title">Bitácora de trazabilidad de prompts y crítica</h3>
+              <p class="card-sub">Rúbrica donde el 50% de la nota pondera la auditoría reflexiva de errores, alucinaciones y sesgos del LLM.</p>
             </div>
-            <h3 class="font-bold text-slate-200 text-sm sm:text-base">Bitácora de Trazabilidad de Prompts y Crítica</h3>
-            <p class="text-xs text-slate-400">Rúbrica donde el 50% de la nota pondera la auditoría reflexiva de los errores, alucinaciones y sesgos del LLM.</p>
+            <button onclick="copiarTemplate('bitacoraPrompts', this)" class="btn btn-outline btn-sm" style="width:100%"><i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copiar plantilla</span></button>
           </div>
-          <button onclick="copiarTemplate('bitacoraPrompts', this)" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center justify-center gap-1.5 transition">
-            <i class="fa-regular fa-copy"></i> Copiar Plantilla al Portapapeles
-          </button>
-        </div>
-
-        <!-- Template 3 -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3 shadow-lg flex flex-col justify-between">
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-400 border border-amber-800 font-semibold">Defensa Oral Rápida</span>
-              <span class="text-xs text-slate-500">Vendrell & Johnston (2026)</span>
+          <div class="card template-card">
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem">
+                <span class="badge badge-terracotta">Defensa oral rápida</span>
+                <span style="font-size:.7rem;color:var(--ink-faint)">Vendrell &amp; Johnston (2026)</span>
+              </div>
+              <h3 class="card-title">Protocolo de comprobación socrática (5 min)</h3>
+              <p class="card-sub">Tres preguntas de variación de parámetros para desenmascarar la ilusión de competencia e identificar cognitive outsourcing.</p>
             </div>
-            <h3 class="font-bold text-slate-200 text-sm sm:text-base">Protocolo de Comprobación Socrática Rápida (5 min)</h3>
-            <p class="text-xs text-slate-400">3 preguntas de variación de parámetros para desenmascarar la ilusión de competencia e identificar Cognitive Outsourcing.</p>
+            <button onclick="copiarTemplate('socraticDefense', this)" class="btn btn-outline btn-sm" style="width:100%"><i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copiar plantilla</span></button>
           </div>
-          <button onclick="copiarTemplate('socraticDefense', this)" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center justify-center gap-1.5 transition">
-            <i class="fa-regular fa-copy"></i> Copiar Plantilla al Portapapeles
-          </button>
-        </div>
-
-        <!-- Template 4 -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3 shadow-lg flex flex-col justify-between">
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-950 text-purple-400 border border-purple-800 font-semibold">Contención Afectiva</span>
-              <span class="text-xs text-slate-500">Chan (2025) / Tian (2026)</span>
+          <div class="card template-card">
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem">
+                <span class="badge badge-terracotta">Contención afectiva</span>
+                <span style="font-size:.7rem;color:var(--ink-faint)">Chan (2025) / Tian (2026)</span>
+              </div>
+              <h3 class="card-title">Pauta de desculpabilización y agencia ética</h3>
+              <p class="card-sub">Guía docente para abordar a estudiantes con ansiedad por uso de IA o síndrome del impostor digital, sin punitivismo ciego.</p>
             </div>
-            <h3 class="font-bold text-slate-200 text-sm sm:text-base">Pauta de Desculpabilización y Agencia Ética</h3>
-            <p class="text-xs text-slate-400">Guía docente para abordar a estudiantes con ansiedad por uso de IA o síndrome del impostor digital sin punitivismo ciego.</p>
+            <button onclick="copiarTemplate('afectiva', this)" class="btn btn-outline btn-sm" style="width:100%"><i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copiar plantilla</span></button>
           </div>
-          <button onclick="copiarTemplate('afectiva', this)" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center justify-center gap-1.5 transition">
-            <i class="fa-regular fa-copy"></i> Copiar Plantilla al Portapapeles
-          </button>
         </div>
+      </section>
+
+      <!-- 4. MOTOR EN CASCADA -->
+      <section id="view-cascada" class="view hidden" aria-label="Motor en cascada">
+        <div class="view-head" style="display:flex;flex-wrap:wrap;gap:.8rem;align-items:flex-start;justify-content:space-between">
+          <div>
+            <h2 class="view-title"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Motor en cascada resiliente</h2>
+            <p class="view-lead">Enrutamiento inteligente con conmutación instantánea ante cuotas agotadas (429) o sobrecarga (503).</p>
+          </div>
+          <button onclick="refreshModelsList()" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i><span>Re-escanear modelos</span></button>
+        </div>
+
+        <div class="tier-grid" style="margin-bottom:1.25rem">
+          <div class="card tier-card">
+            <p class="tier-kicker">Prioridad 1 · Flash alta potencia</p>
+            <p class="tier-name">Gemini 3.8 / 3.6 Flash</p>
+            <p class="tier-desc">Razonamiento rápido · máxima capacidad</p>
+          </div>
+          <div class="card tier-card">
+            <p class="tier-kicker">Prioridad 1 · Flash estándar</p>
+            <p class="tier-name">Gemini Flash Latest</p>
+            <p class="tier-desc">Equilibrio entre potencia y cuota</p>
+          </div>
+          <div class="card tier-card tier-2">
+            <p class="tier-kicker">Prioridad 2 · Flash-Lite respaldo</p>
+            <p class="tier-name">Gemini 3.6 / 3.1 Flash-Lite</p>
+            <p class="tier-desc">Baja latencia · resiliencia de cuota</p>
+          </div>
+          <div class="card tier-card tier-2">
+            <p class="tier-kicker">Prioridad 2 · Fallback ultraligero</p>
+            <p class="tier-name">Alias -latest siempre vigentes</p>
+            <p class="tier-desc">Respaldo final garantizado</p>
+          </div>
+        </div>
+
+        <div class="data-table-wrap">
+          <div style="padding:1rem 1.1rem;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:.6rem;background:var(--card)">
+            <h3 style="font-family:'Fraunces',serif;font-size:.95rem;margin:0">Ruta de cascada activa en tiempo real</h3>
+            <span id="modelsCountBadge" class="badge badge-teal">Cargando modelos…</span>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead><tr><th>Prioridad</th><th>Modelo</th><th>Nivel</th><th>Benchmark est.</th><th>Estado</th></tr></thead>
+              <tbody id="cascadeModelsTableBody"><!-- Inyectado por JS --></tbody>
+            </table>
+          </div>
+        </div>
+        <p class="field-hint" style="margin-top:.7rem"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>&nbsp;La tabla se sincroniza con su API key: los modelos sin cuota se marcan y la cascada los omite automáticamente.</p>
+      </section>
+
+      <!-- 5. EVIDENCIA CIENTÍFICA -->
+      <section id="view-evidencia" data-reveal class="view hidden" aria-label="Evidencia científica">
+        <div class="view-head">
+          <h2 class="view-title"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>Corpus teórico y evidencia científica</h2>
+          <p class="view-lead">Glosario interactivo de los estudios empíricos y marcos teóricos que fundamentan las decisiones del sistema.</p>
+        </div>
+
+        <div class="declaration">
+          <h4><i class="fa-solid fa-scroll" aria-hidden="true"></i>Declaración de sinceridad y rigor epistemológico</h4>
+          <p>Esta aplicación no realiza selecciones reducidas ni sesgadas. Opera fundamentada en el corpus íntegro de 35 investigaciones científicas: los 28 artículos empíricos internacionales indexados mediante Consensus y los fundamentos ontológicos, clínicos y metodológicos procedentes del trabajo de curso titulado:</p>
+          <div class="thesis">«IMPACTO PSICOLÓGICO DE LA INTERACCIÓN COTIDIANA CON IA EN LA CONFIGURACIÓN DEL YO ALGORÍTMICO EN ESTUDIANTES UNIVERSITARIOS»<br><span>Autores: María Karla Gerada Pérez y Carlos Miguel Valdés Rodríguez (Universidad Central «Marta Abreu» de Las Villas).</span></div>
+          <p style="margin:0">Cada diagnóstico e intervención docente consulta activamente esta base de conocimientos para garantizar recomendaciones con validez científica demostrable.</p>
+        </div>
+
+        <div class="search-wrap">
+          <i class="fa-solid fa-search" aria-hidden="true"></i>
+          <input type="text" id="filterEvidenceInput" oninput="filterEvidence(this.value)" placeholder="Buscar por autor o concepto (ej: Cognitive Outsourcing, Chan, Dunning-Kruger, Vygotsky)…" class="input" aria-label="Filtrar evidencia por autor o concepto">
+        </div>
+
+        <div id="evidenceCardsGrid"><!-- Inyectado por JS --></div>
+      </section>
+
+      <!-- 6. MANUAL DE USO -->
+      <section id="view-guia" class="view hidden" aria-label="Manual de uso" style="max-width:56rem">
+        <div class="view-head">
+          <h2 class="view-title"><i class="fa-solid fa-book-open" aria-hidden="true"></i>Manual operativo para el docente</h2>
+          <p class="view-lead">Guía pedagógica integral para utilizar el Asesor Psicopedagógico en el aula y en evaluaciones de alto impacto.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="card guide-step">
+            <span class="guide-num" aria-hidden="true">1</span>
+            <div><h3>Configuración de la API Key de Google AI Studio</h3>
+            <p>Haga clic en el botón superior <strong>“Configurar API Key”</strong> e ingrese su clave gratuita de Google AI Studio. La clave se almacena exclusivamente en el almacenamiento local de su navegador (<code>localStorage</code>) y nunca viaja a servidores intermedios.</p></div>
+          </div>
+          <div class="card guide-step">
+            <span class="guide-num" aria-hidden="true">2</span>
+            <div><h3>Evaluador Clínico: caso individual vs. grupo / aula</h3>
+            <p>Utilice el selector de alcance para diagnosticar tanto a un <strong>estudiante individual</strong> (nivel de descarga cognitiva y contención afectiva) como a un <strong>grupo completo</strong> (homogeneización masiva, colapso de debates y dinámicas colectivas de pérdida de soberanía).</p></div>
+          </div>
+          <div class="card guide-step">
+            <span class="guide-num" aria-hidden="true">3</span>
+            <div><h3>Carga multiformato de evidencias</h3>
+            <p>Tanto en el Evaluador como en el Consultor en Vivo puede adjuntar <strong>PDFs, documentos Word (.docx), tablas Excel (.xlsx/.csv), fotos de exámenes manuscritos o código</strong>. El sistema procesa los contenidos y los integra en el análisis diagnóstico.</p></div>
+          </div>
+          <div class="card guide-step">
+            <span class="guide-num" aria-hidden="true">4</span>
+            <div><h3>Flujo bidireccional de consultoría</h3>
+            <p>Al generar un diagnóstico, presione el botón <strong>“Continuar en el Consultor en Vivo”</strong>. El caso se transferirá automáticamente al chat, permitiéndole solicitar rúbricas analíticas, exámenes orales de 5 minutos o adaptaciones pedagógicas personalizadas.</p></div>
+          </div>
+          <div class="card guide-step">
+            <span class="guide-num" aria-hidden="true">5</span>
+            <div><h3>Glosario bilingüe y marco de fricción metacognitiva</h3>
+            <p>El sistema traduce y define al español cualquier término técnico (<em>Cognitive Outsourcing</em>, <em>Sovereignty Trap</em>, <em>Epistemic Debt</em>, etc.) y fundamenta cada estrategia en los 28 papers de Consensus, garantizando rigor científico y calidez humana.</p></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- NAVEGACIÓN INFERIOR (móvil / tablet) -->
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <button onclick="switchTab('evaluador')" class="nav-tab bottom-nav-item" aria-label="Evaluador Clínico"><i class="fa-solid fa-stethoscope" aria-hidden="true"></i><span>Evaluador</span></button>
+    <button onclick="switchTab('chat')" data-tab="consultor" class="nav-tab bottom-nav-item" aria-label="Consultor en Vivo"><i class="fa-solid fa-comments" aria-hidden="true"></i><span>Consultor</span></button>
+    <button onclick="switchTab('biblioteca')" class="nav-tab bottom-nav-item" aria-label="Biblioteca de fricción"><i class="fa-solid fa-book-bookmark" aria-hidden="true"></i><span>Biblioteca</span></button>
+    <button onclick="switchTab('cascada')" class="nav-tab bottom-nav-item" aria-label="Motor en Cascada"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><span>Cascada</span></button>
+    <button onclick="switchTab('evidencia')" class="nav-tab bottom-nav-item" aria-label="Evidencia científica"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i><span>Evidencia</span></button>
+    <button onclick="switchTab('guia')" class="nav-tab bottom-nav-item" aria-label="Manual de uso"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span>Manual</span></button>
+  </nav>
+
+  <!-- MODAL: API KEY -->
+  <div id="apiKeyModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-label="Configurar API Key">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h3><i class="fa-solid fa-key" aria-hidden="true"></i>API Key de Google AI Studio</h3>
+        <button onclick="closeApiKeyModal()" class="icon-btn" style="width:38px;height:38px" aria-label="Cerrar"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
       </div>
-    </section>
-
-    <!-- 4. TAB: MOTOR EN CASCADA (BENCHMARKS Y RESILIENCIA) -->
-    <section id="view-cascada" class="w-full max-w-5xl mx-auto p-3 sm:p-6 space-y-6 hidden">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
-        <div>
-          <h2 class="text-xl font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-layer-group text-blue-400"></i> Motor en Cascada Resiliente (Benchmarks 2026)
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1">
-            Enrutamiento inteligente con conmutación instantánea ante cuotas agotadas (429) o sobrecarga (503).
-          </p>
-        </div>
-        <button onclick="refreshModelsList()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-arrows-rotate"></i> Re-escanear Modelos
-        </button>
+      <p style="font-size:.8rem;color:var(--ink-soft);line-height:1.6;margin:0 0 1rem">Para activar la cascada con modelos Flash de alta velocidad en la capa gratuita, ingrese su API Key de Google AI Studio.</p>
+      <div class="field">
+        <label class="field-label" for="inputApiKey">Clave de API</label>
+        <input type="password" id="inputApiKey" placeholder="AIzaSy…" class="input font-mono2" autocomplete="off">
       </div>
-
-      <!-- 4 Tier Hierarchy Cards (Familia Flash) -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <div class="p-3.5 bg-slate-900 border border-blue-900/60 rounded-xl space-y-1">
-          <span class="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Prioridad 1: Flash Alta Potencia</span>
-          <p class="text-xs text-slate-200 font-semibold">Gemini 3.8 / 3.7 / 3.6 / 3.5 Flash</p>
-          <p class="text-[11px] text-slate-400">Arena Elo >1400 | Razonamiento Rápido</p>
-        </div>
-        <div class="p-3.5 bg-slate-900 border border-indigo-900/60 rounded-xl space-y-1">
-          <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Prioridad 1: Flash Estándar</span>
-          <p class="text-xs text-slate-200 font-semibold">Gemini 3.0 / 2.5 / 2.0 Flash / Latest</p>
-          <p class="text-[11px] text-slate-400">Arena Elo >1300 | Workhorse Equilibrado</p>
-        </div>
-        <div class="p-3.5 bg-slate-900 border border-emerald-900/60 rounded-xl space-y-1">
-          <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Prioridad 2: Flash-Lite Respaldo</span>
-          <p class="text-xs text-slate-200 font-semibold">Gemini 3.5 / 3.1 / 2.5 Flash-Lite</p>
-          <p class="text-[11px] text-slate-400">Baja Latencia | Resiliencia de Cuota</p>
-        </div>
-        <div class="p-3.5 bg-slate-900 border border-amber-900/60 rounded-xl space-y-1">
-          <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Prioridad 2: Fallback Ultraligero</span>
-          <p class="text-xs text-slate-200 font-semibold">Gemini Flash-Lite Latest / 1.5-8B</p>
-          <p class="text-[11px] text-slate-400">Menor cuota | Resiliencia Total</p>
-        </div>
-      </div>
-
-      <!-- Realtime Table -->
-      <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
-        <div class="p-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
-          <h3 class="font-bold text-sm text-slate-200">Ruta de Cascada Activa en Tiempo Real</h3>
-          <span id="modelsCountBadge" class="text-xs px-2 py-0.5 rounded bg-blue-900/50 text-blue-300 border border-blue-800">Cargando modelos...</span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs text-slate-300">
-            <thead class="bg-slate-950 text-slate-400 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-800">
-              <tr>
-                <th class="p-3">Prioridad</th>
-                <th class="p-3">Modelo</th>
-                <th class="p-3">Nivel de Capacidad</th>
-                <th class="p-3">Benchmark Est.</th>
-                <th class="p-3">Estado</th>
-              </tr>
-            </thead>
-            <tbody id="cascadeModelsTableBody" class="divide-y divide-slate-800/60">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. TAB: EVIDENCIA CIENTÍFICA (28 PAPERS) -->
-    <section id="view-evidencia" class="w-full max-w-5xl mx-auto p-3 sm:p-6 space-y-6 hidden">
-      <div class="border-b border-slate-800 pb-4">
-        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-graduation-cap text-indigo-400"></i> Corpus Teórico y Evidencia Científica (Consensus Database)
-        </h2>
-        <p class="text-xs sm:text-sm text-slate-400 mt-1">
-          Glosario interactivo de los 28 estudios empíricos y marcos teóricos que fundamentan las decisiones del sistema.
-        </p>
-      </div>
-
-      <!-- Declaración de Sinceridad y Rigor Epistemológico -->
-      <div class="mb-6 p-4 rounded-xl bg-blue-950/40 border border-blue-800/60 text-slate-200">
-        <div class="flex items-center gap-2 mb-2 text-blue-400 font-semibold text-sm sm:text-base">
-          <span>📜</span>
-          <h4>Declaración de Sinceridad y Rigor Epistemológico</h4>
-        </div>
-        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed text-justify break-words">
-          Esta aplicación no realiza selecciones reducidas ni sesgadas. Opera fundamentada en el corpus íntegro de 35 investigaciones científicas: los 28 artículos empíricos internacionales indexados mediante Consensus y los fundamentos ontológicos, clínicos y metodológicos procedentes del trabajo de curso titulado:
-        </p>
-        <div class="my-3 p-3 bg-slate-900/90 rounded-lg border border-slate-800 text-xs sm:text-sm text-blue-300 font-medium break-words leading-relaxed">
-          «IMPACTO PSICOLÓGICO DE LA INTERACCIÓN COTIDIANA CON IA EN LA CONFIGURACIÓN DEL YO ALGORÍTMICO EN ESTUDIANTES UNIVERSITARIOS»<br>
-          <span class="text-slate-400 font-normal">Autores: María Karla Gerada Pérez y Carlos Miguel Valdés Rodríguez (Universidad Central «Marta Abreu» de Las Villas).</span>
-        </div>
-        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed break-words">
-          Cada diagnóstico e intervención docente consulta activamente esta base de conocimientos para garantizar recomendaciones con validez científica demostrable.
-        </p>
-      </div>
-
-      <!-- Filter Input -->
-      <div class="relative">
-        <i class="fa-solid fa-search absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-        <input type="text" id="filterEvidenceInput" oninput="filterEvidence(this.value)" placeholder="Buscar por autor, concepto (ej: Cognitive Outsourcing, Chan, Dunning-Kruger, 4E, Vygotsky)..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500">
-      </div>
-
-      <!-- Evidence Cards Grid -->
-      <div id="evidenceCardsGrid" class="w-full max-w-full px-2 sm:px-4 space-y-4">
-        <!-- Injected via JavaScript -->
-      </div>
-    </section>
-
-    <!-- 6. TAB: MANUAL DE USO INTERACTIVO -->
-    <section id="view-guia" class="w-full max-w-4xl mx-auto p-3 sm:p-6 space-y-6 hidden">
-      <div class="border-b border-slate-800 pb-4">
-        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-book-open text-sky-400"></i> Manual Operativo para el Docente
-        </h2>
-        <p class="text-xs sm:text-sm text-slate-400 mt-1">
-          Guía pedagógica integral para utilizar el Asesor Psicopedagógico en el aula y en evaluaciones de alto impacto.
-        </p>
-      </div>
-
-      <div class="space-y-4 text-xs sm:text-sm text-slate-300">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-2 shadow-lg">
-          <h3 class="font-bold text-blue-400 text-sm sm:text-base flex items-center gap-2">
-            <span class="w-6 h-6 rounded-full bg-blue-900 flex items-center justify-center text-xs text-white">1</span>
-            Configuración de la API Key de Google AI Studio
-          </h3>
-          <p>Haga clic en el botón superior derecho <strong>"Configurar API Key"</strong> e ingrese su clave gratuita de Google AI Studio. La clave se almacena exclusivamente en el almacenamiento local seguro de su navegador (<code>localStorage</code>) y nunca viaja a servidores intermedios.</p>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-2 shadow-lg">
-          <h3 class="font-bold text-blue-400 text-sm sm:text-base flex items-center gap-2">
-            <span class="w-6 h-6 rounded-full bg-blue-900 flex items-center justify-center text-xs text-white">2</span>
-            Evaluador Clínico: Caso Individual vs. Grupo / Aula Completa
-          </h3>
-          <p>Utilice el selector de alcance para diagnosticar tanto a un <strong>estudiante individual</strong> (analizando su nivel de descarga cognitiva y contención afectiva) como a un <strong>grupo completo</strong> (detectando homogeneización masiva, colapso de debates y dinámicas colectivas de pérdida de soberanía).</p>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-2 shadow-lg">
-          <h3 class="font-bold text-blue-400 text-sm sm:text-base flex items-center gap-2">
-            <span class="w-6 h-6 rounded-full bg-blue-900 flex items-center justify-center text-xs text-white">3</span>
-            Carga Multiformato de Evidencias (+)
-          </h3>
-          <p>Tanto en el Evaluador como en el Consultor en Vivo, puede presionar el botón de clip o (+) para adjuntar <strong>PDFs, documentos Word (.docx), tablas Excel (.xlsx/.csv), fotos de exámenes manuscritos o código</strong>. El sistema procesa los contenidos y los integra en el análisis diagnóstico.</p>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-2 shadow-lg">
-          <h3 class="font-bold text-blue-400 text-sm sm:text-base flex items-center gap-2">
-            <span class="w-6 h-6 rounded-full bg-blue-900 flex items-center justify-center text-xs text-white">4</span>
-            Flujo Bidireccional de Consultoría
-          </h3>
-          <p>Al generar un diagnóstico, presione el botón <code>💬 Continuar y Profundizar en el Consultor en Vivo</code>. El caso se transferirá automáticamente al chat, permitiéndole solicitar rúbricas analíticas, exámenes orales de 5 minutos o adaptaciones pedagógicas personalizadas.</p>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-2 shadow-lg">
-          <h3 class="font-bold text-blue-400 text-sm sm:text-base flex items-center gap-2">
-            <span class="w-6 h-6 rounded-full bg-blue-900 flex items-center justify-center text-xs text-white">5</span>
-            Glosario Bilingüe y Marco de Fricción Metacognitiva
-          </h3>
-          <p>El sistema traduce y define al español cualquier término técnico (<em>Cognitive Outsourcing</em>, <em>Sovereignty Trap</em>, <em>Epistemic Debt</em>, etc.) y fundamenta cada estrategia en los 28 papers de Consensus, garantizando rigor científico y calidez humana.</p>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- MODAL: API KEY CONFIG -->
-  <div id="apiKeyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between">
-        <h3 class="font-bold text-base text-white flex items-center gap-2">
-          <i class="fa-solid fa-key text-amber-400"></i> API Key de Google AI Studio
-        </h3>
-        <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-white p-1">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <p class="text-xs text-slate-300 leading-relaxed">
-        Para activar la cascada con modelos Flash de alta velocidad y estabilidad en la capa gratuita, ingrese su API Key de Google AI Studio.
-      </p>
-
-      <div>
-        <label class="block text-xs font-semibold text-slate-300 mb-1">Clave de API</label>
-        <input type="password" id="inputApiKey" placeholder="AIzaSy..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 font-mono focus:outline-none focus:border-blue-500">
-      </div>
-
-      <div class="p-3 bg-blue-950/40 border border-blue-900/50 rounded-lg text-[11px] text-blue-300 flex items-start gap-2">
-        <i class="fa-solid fa-lock mt-0.5 text-blue-400"></i>
-        <span>Almacenamiento seguro 100% en su navegador (localStorage). Su clave nunca viaja a servidores externos.</span>
-      </div>
-
-      <div class="flex items-center justify-end gap-2 pt-2">
-        <button onclick="closeApiKeyModal()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-medium hover:bg-slate-700 transition">Cancelar</button>
-        <button onclick="saveApiKey()" class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition">Guardar y Escanear</button>
+      <div class="info-note"><i class="fa-solid fa-lock" aria-hidden="true"></i><span>Almacenamiento seguro 100% en su navegador (localStorage). Su clave nunca viaja a servidores externos.</span></div>
+      <div class="modal-foot">
+        <button onclick="closeApiKeyModal()" class="btn btn-outline btn-sm">Cancelar</button>
+        <button onclick="saveApiKey()" class="btn btn-primary btn-sm">Guardar y escanear</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: TECHNIQUE EXPLANATION -->
-  <div id="techniqueModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between">
-        <h3 id="techniqueModalTitle" class="font-bold text-base text-white flex items-center gap-2">
-          Explicación de la Técnica
-        </h3>
-        <button onclick="closeTechniqueModal()" class="text-slate-400 hover:text-white p-1">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+  <!-- MODAL: EXPLICACIÓN DE TÉCNICA -->
+  <div id="techniqueModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-label="Explicación de la técnica">
+    <div class="modal-panel modal-lg">
+      <div class="modal-head">
+        <h3 id="techniqueModalTitle">Explicación de la técnica</h3>
+        <button onclick="closeTechniqueModal()" class="icon-btn" style="width:38px;height:38px" aria-label="Cerrar"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
       </div>
-
-      <div id="techniqueModalBody" class="prose-markdown text-xs text-slate-300 space-y-2">
-        <!-- Injected via JS -->
-      </div>
-
-      <div class="flex justify-end pt-2">
-        <button onclick="closeTechniqueModal()" class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition">Entendido</button>
+      <div id="techniqueModalBody" class="prose-markdown"><!-- Inyectado por JS --></div>
+      <div class="modal-foot">
+        <button onclick="closeTechniqueModal()" class="btn btn-primary btn-sm">Entendido</button>
       </div>
     </div>
   </div>
 
-  <!-- JAVASCRIPT CORE -->
+  <!-- MODAL: INFORME DE DIAGNÓSTICO DE CONECTIVIDAD -->
+  <div id="diagnosticReportModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-label="Informe de diagnóstico de conectividad">
+    <div class="modal-panel modal-lg" style="display:flex;flex-direction:column;max-height:90dvh">
+      <div class="modal-head" style="border-bottom:1px solid var(--line);padding-bottom:.8rem">
+        <h3><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>Informe de diagnóstico de conectividad y cuota</h3>
+        <button onclick="closeDiagnosticReportModal()" class="icon-btn" style="width:38px;height:38px" title="Cerrar modal" aria-label="Cerrar informe"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      </div>
+      <p style="font-size:.74rem;color:var(--ink-faint);margin:.6rem 0">Detalle de peticiones y respuestas del motor en cascada Flash.</p>
+      <div class="data-table-wrap" style="flex:1;overflow-y:auto;max-height:16rem">
+        <table class="data-table">
+          <thead><tr><th>Modelo intentado</th><th>Código / Estado</th><th>Mensaje de Google / Red</th></tr></thead>
+          <tbody id="diagnosticTableBody"><!-- Inyectado por JS --></tbody>
+        </table>
+      </div>
+      <div class="info-note" style="margin-top:.8rem">
+        <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+        <span><strong>Guía rápida:</strong> Error 429 (limit: 0) → genere una nueva API Key en <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:var(--teal-deep)">aistudio.google.com</a>. Error de red/CORS → ejecute la app vía <span class="font-mono2">http://localhost</span> o hosting web. Error 400/403 → clave malformada o no habilitada en su región.</span>
+      </div>
+      <div class="modal-foot" style="border-top:1px solid var(--line);margin-top:.8rem;justify-content:space-between">
+        <button id="btnCopyDiagnostic" onclick="copyDiagnosticReport()" class="btn btn-outline btn-sm"><i class="fa-solid fa-copy" style="color:var(--teal)" aria-hidden="true"></i><span>Copiar registro</span></button>
+        <span style="display:flex;gap:.6rem">
+          <button onclick="closeDiagnosticReportModal(); openApiKeyModal();" class="btn btn-terracotta btn-sm"><i class="fa-solid fa-key" aria-hidden="true"></i><span>Cambiar API Key</span></button>
+          <button onclick="closeDiagnosticReportModal()" class="btn btn-outline btn-sm">Cerrar</button>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast-notification" class="hidden" role="status" aria-live="polite"></div>
+
+  <style>
+    /* Reglas responsivas complementarias */
+    @media (min-width: 1024px) {
+      .eval-grid { grid-template-columns: 5fr 7fr !important; }
+      .eval-selects { grid-template-columns: 1fr 1fr !important; }
+    }
+  </style>
   <script>
+    /* Typewriter nativo — subtítulo hero (local, 0KB) */
+    (function() {
+      const el = document.querySelector('.brand-sub');
+      if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const full = el.textContent.trim();
+      el.innerHTML = '<span class="tw-text"></span><span class="typewriter-caret" aria-hidden="true"></span>';
+      const tw = el.querySelector('.tw-text');
+      let i = 0;
+      const timer = setInterval(() => {
+        tw.textContent = full.slice(0, ++i);
+        if (i >= full.length) { clearInterval(timer); setTimeout(() => el.querySelector('.typewriter-caret').remove(), 2500); }
+      }, 28);
+    })();
+
+    /* Animaciones de entrada por vista (local, sin red) */
+    (function() {
+      const origSwitch = window.switchTab;
+      if (typeof origSwitch !== 'function') return;
+      window.switchTab = function(tabId) {
+        origSwitch(tabId);
+        const view = document.getElementById('view-' + tabId);
+        if (!view) return;
+        view.classList.remove('view-enter');
+        void view.offsetWidth; /* reinicia animación */
+        view.classList.add('view-enter');
+        /* Escalonado en tarjetas hijas directas */
+        const cards = view.querySelectorAll(':scope > .card, :scope > section > .card');
+        cards.forEach((el, i) => {
+          el.classList.remove('anim-rise','anim-rise-1','anim-rise-2','anim-rise-3','anim-rise-4','anim-rise-5');
+          void el.offsetWidth;
+          el.classList.add('anim-rise' + (i === 0 ? '' : '-' + Math.min(i, 5)));
+        });
+      };
+    })();
+
     // --- GLOBAL STATE ---
     let currentScope = 'individual'; // 'individual' | 'group'
     let currentTab = 'evaluador';
@@ -3223,75 +3522,6 @@ Pregunta 3 (Crítica reflexiva): ¿Qué recomendación de la IA descartaste expr
       }
     });
   </script>
-
-  <!-- INFORME DE DIAGNÓSTICO DE CONECTIVIDAD Y CUOTA (MODAL DE EMERGENCIA) -->
-  <div id="diagnosticReportModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl flex flex-col max-h-[90vh] space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div class="flex items-center space-x-2.5">
-          <div class="w-9 h-9 rounded-lg bg-red-950/80 border border-red-800 flex items-center justify-center text-red-400 flex-shrink-0">
-            <i class="fa-solid fa-triangle-exclamation text-base"></i>
-          </div>
-          <div>
-            <h3 class="font-bold text-sm sm:text-base text-white">Informe de Diagnóstico de Conectividad y Cuota</h3>
-            <p class="text-[11px] text-slate-400">Detalle de peticiones y respuestas del motor en cascada Flash</p>
-          </div>
-        </div>
-        <button onclick="closeDiagnosticReportModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition" title="Cerrar modal">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <!-- Diagnostic Table -->
-      <div class="flex-1 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950/80 max-h-56">
-        <table class="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr class="border-b border-slate-800 bg-slate-900/90 text-[11px] text-slate-400 sticky top-0">
-              <th class="p-2.5 font-semibold">Modelo Intentado</th>
-              <th class="p-2.5 font-semibold">Código / Estado</th>
-              <th class="p-2.5 font-semibold">Mensaje Exacto devuelto por Google / Red</th>
-            </tr>
-          </thead>
-          <tbody id="diagnosticTableBody">
-            <!-- Injected via JavaScript -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Quick Solution Guide -->
-      <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3.5 text-xs space-y-2 text-slate-300">
-        <div class="font-semibold text-slate-200 flex items-center gap-1.5 text-xs">
-          <i class="fa-solid fa-lightbulb text-amber-400"></i>
-          <span>Guía Rápida de Solución:</span>
-        </div>
-        <ul class="space-y-1.5 text-[11px] text-slate-400 list-disc list-inside">
-          <li><strong class="text-slate-300">Error 429 (limit: 0 para un modelo):</strong> Su proyecto de Google Cloud tiene cuota cero asignada para ese endpoint o la cuota libre expiró. Se sugiere generar una nueva API Key en <span class="text-blue-400 underline cursor-pointer" onclick="window.open('https://aistudio.google.com/app/apikey', '_blank')">aistudio.google.com</span> en un proyecto limpio sin restricciones.</li>
-          <li><strong class="text-slate-300">Error de Red / CORS (Failed to fetch):</strong> Al ejecutar desde el sistema de archivos local (<code class="text-slate-300 bg-slate-900 px-1 py-0.5 rounded">file://</code>), el navegador móvil puede bloquear la llamada directa a la API por políticas de origen cruzado. Ejecute la app mediante un servidor local (<code class="text-slate-300 bg-slate-900 px-1 py-0.5 rounded">http://localhost</code>) o hosting web.</li>
-          <li><strong class="text-slate-300">Error 400 / 403:</strong> Clave de API malformada o no habilitada en su región. Pulse "Cambiar API Key" para reconfigurarla.</li>
-        </ul>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800">
-        <button id="btnCopyDiagnostic" onclick="copyDiagnosticReport()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition">
-          <i class="fa-solid fa-copy text-blue-400"></i>
-          <span>Copiar Registro de Error</span>
-        </button>
-        <div class="flex items-center gap-2">
-          <button onclick="closeDiagnosticReportModal(); openApiKeyModal();" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-sm">
-            <i class="fa-solid fa-key"></i>
-            <span>Cambiar API Key</span>
-          </button>
-          <button onclick="closeDiagnosticReportModal()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition">
-            Cerrar
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toast-notification" class="fixed bottom-5 right-5 bg-slate-900 border border-slate-700 text-slate-100 text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-2xl z-50 flex items-center gap-2 transition-all duration-300 hidden"></div>
 
 </body>
 </html>
